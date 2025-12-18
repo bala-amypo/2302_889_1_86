@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 
 
 @Entity
- public class UserEntity{
+ public class User{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +18,7 @@ import jakarta.persistence.GenerationType;
     private String password;
     private String role;
     
-    public UserEntity(Long id,String name,String email,String password,String role){
+    public User(Long id,String name,String email,String password,String role){
         this.id=id;
         this.name=name;
         this.email=email;
@@ -26,7 +26,7 @@ import jakarta.persistence.GenerationType;
        this.role = (role == null) ? "USER" : role;
 
     }
-    public UserEntity(){
+    public User(){
 
     }
     public Long getId(){
