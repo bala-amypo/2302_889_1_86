@@ -34,7 +34,6 @@ public class CatalogController {
         return catalogService.findSuitableCrops(ph, water, season);
     }
 
-    // GET fertilizers by crop
     @GetMapping("/fertilizers/by-crop")
     public List<Fertilizer> getFertilizersByCrop(@RequestParam String name) {
         List<String> cropNames = Arrays.asList(name.split(","));
