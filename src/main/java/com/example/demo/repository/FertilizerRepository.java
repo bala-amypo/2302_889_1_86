@@ -4,6 +4,4 @@ package com.example.demo.repository;
  import org.springframework.stereotype.Repository;
  @Repository
  public interface FertilizerRepository extends JpaRepository<Fertilizer,Long>{
-    
-
  }

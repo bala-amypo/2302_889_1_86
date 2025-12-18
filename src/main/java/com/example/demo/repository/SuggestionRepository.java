@@ -4,6 +4,4 @@ package com.example.demo.repository;
  import org.springframework.stereotype.Repository;
  @Repository
  public interface SuggestionRepository extends JpaRepository<Suggestion,Long>{
-    
-
  }
