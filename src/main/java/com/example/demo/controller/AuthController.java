@@ -23,8 +23,9 @@ public class AuthController{
     public String login(@RequestBody User request){
         User user=userService.findByEmail(request.getEmail());
         if(!passwordEncoder.matches(request.getPassword(),user.getPassword())){
-            R
-        }
+            return"Invalid credentials";
+           }
+           return "Login successful";
     }
 
 }

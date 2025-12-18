@@ -67,9 +67,8 @@ import jakarta.persistence.GenerationType;
         return ADMIN;
 
     }
-    public void setRole(String role){
-       this.role = (role == null) ? "USER" : role;
-    
+    public void setADMIN(String aDMIN){
+            ADMIN=aDMIN;
     }
 
 
