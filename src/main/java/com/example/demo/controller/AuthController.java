@@ -1,4 +1,4 @@
-package co.example.demo.controller;
+package com.example.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncprder;
 import org.springframework.web.bind.annotataion.*;
@@ -13,5 +13,10 @@ public class AuthController{
     private UserService userservice;
 
     @Autowired
-    
+    private BCryptPasswordEncorder passwordEncorder;
+    @PostMapping("/register")
+    public User register(@ReuestBody User user){
+        user.setPassword(passwordEncorder.encorde(user.getPassword()))
+    }
+
 }
