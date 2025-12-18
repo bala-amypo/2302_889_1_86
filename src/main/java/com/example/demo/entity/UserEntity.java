@@ -1,5 +1,9 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+
 @Entity
  public class UserEntity{
     @Id
@@ -58,7 +62,7 @@ package com.example.demo.entity;
 
     }
     public void setRole(String role){
-        this.email=role;
+        this.role=role;
     
     }
 
