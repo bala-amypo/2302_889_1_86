@@ -77,8 +77,4 @@ import jakarta.persistence.GenerationType;
     public void setUSER(String uSER){
            USER=uSER;
     }
-    
-
-
-
  }
