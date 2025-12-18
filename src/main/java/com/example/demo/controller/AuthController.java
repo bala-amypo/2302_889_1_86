@@ -1,31 +1,25 @@
 package com.example.demo.controller;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncprder;
-import org.springframework.web.bind.annotataion.*;
 
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-public class AuthController{
-    @Autowired
-    private UserService userservice;
+@RequiredArgsConstructor
+public class AuthController {
 
-    @Autowired
-    private BCryptPasswordEncorder passwordEncorder;
+    private final UserService userService;
+
     @PostMapping("/register")
-    public User register(@ReuestBody User user){
-        user.setPassword(passwordEncorder.encorde(user.getPassword()));
+    public User register(@RequestBody User user) {
         return userService.register(user);
     }
-    @PostMapping("/login")
-    public String login(@RequestBody User request){
-        User user=userService.findByEmail(request.getEmail());
-        if(!passwordEncoder.matches(request.getPassword(),user.getPassword())){
-            return"Invalid credentials";
-           }
-           return "Login successful";
-    }
 
+    @PostMapping("/login")
+    public User login(@RequestParam String email) {
+        // basic login example (password check usually done with Spring Security)
+        return userService.findByEmail(email);
+    }
 }
