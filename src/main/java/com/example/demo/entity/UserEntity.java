@@ -2,11 +2,15 @@ package com.example.demo.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
 
 @Entity
  public class UserEntity{
     @Id
+    @GenerationType
     private Long id;
     private String name;
     @Column(name=unique)
@@ -19,7 +23,7 @@ import jakarta.persistence.Id;
         this.name=name;
         this.email=email;
         this.password=password;
-        this.role=role;
+       this.role = (role == null) ? "USER" : role;
 
     }
     public UserEntity(){
@@ -62,7 +66,7 @@ import jakarta.persistence.Id;
 
     }
     public void setRole(String role){
-        this.role=role;
+       this.role = (role == null) ? "USER" : role;
     
     }
 
