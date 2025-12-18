@@ -70,6 +70,15 @@ import jakarta.persistence.GenerationType;
     public void setADMIN(String aDMIN){
             ADMIN=aDMIN;
     }
+     public Long getUSER(){
+        return USER;
+
+    }
+    public void setUSER(String uSER){
+           USER=uSER;
+    }
+    
+
 
 
  }
