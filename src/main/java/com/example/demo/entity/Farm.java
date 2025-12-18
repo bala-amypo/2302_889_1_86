@@ -1,12 +1,14 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*; 
 
 @Entity
 public class Farm {
     @Id
     private Long id;
     private String name;
+    @Max(10)
     private Double soilPH;
     private Double waterLevel ;
     private String season;
