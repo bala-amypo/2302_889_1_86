@@ -8,6 +8,11 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImple implements UserService{
-    private final UserRepo userRepository;
+    private final UserRepo userrep;
     @AutoWired
+    public UserServiceImple(UserRepository userrepo){
+        this.userrepo=userrepo;
+    }
+    @Override
+    
 }
