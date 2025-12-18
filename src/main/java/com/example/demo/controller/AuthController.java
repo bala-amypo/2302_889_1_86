@@ -1,22 +1,25 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
-public class AuthController{
+public class AuthController {
 
     private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
+
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    public Object register(@RequestBody Object user) {
+        return userService.register((com.example.demo.entity.User) user);
     }
 
     @PostMapping("/login")
-    public User login(@RequestParam String email) {
+    public Object login(@RequestParam String email) {
         return userService.findByEmail(email);
     }
 }
