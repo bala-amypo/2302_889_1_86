@@ -19,12 +19,13 @@ import jakarta.persistence.GenerationType;
     private String ADMIN;
     private String USER;
     
-    public User(Long id,String name,String email,String password,String role){
+    public User(Long id,String name,String email,String password,String aDMIN,String uSER){
         this.id=id;
         this.name=name;
         this.email=email;
         this.password=password;
-       this.role = (role == null) ? "USER" : role;
+        ADMIN=aDMIN;
+        USER=uSER;
 
     }
     public User(){
@@ -62,8 +63,8 @@ import jakarta.persistence.GenerationType;
         this.password=password;
     
     }
-    public Long getRole(){
-        return role;
+    public Long getADMIN(){
+        return ADMIN;
 
     }
     public void setRole(String role){
