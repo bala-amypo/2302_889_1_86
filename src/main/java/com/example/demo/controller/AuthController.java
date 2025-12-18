@@ -16,7 +16,13 @@ public class AuthController{
     private BCryptPasswordEncorder passwordEncorder;
     @PostMapping("/register")
     public User register(@ReuestBody User user){
-        user.setPassword(passwordEncorder.encorde(user.getPassword()))
+        user.setPassword(passwordEncorder.encorde(user.getPassword()));
+        return userService.register(user);
+    }
+    @PostMapping("/login")
+    public String login(@RequestBody User request){
+        User user=userService.findByEmail(request.getEmail());
+        if(!passwordEncoder.matches(request.getPassword(),user.getPassword()))
     }
 
 }

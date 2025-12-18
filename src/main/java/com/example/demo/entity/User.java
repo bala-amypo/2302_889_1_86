@@ -16,7 +16,8 @@ import jakarta.persistence.GenerationType;
     @Column(name=unique)
     private String email;
     private String password;
-    private String role;
+    private String ADMIN;
+    private String USER;
     
     public User(Long id,String name,String email,String password,String role){
         this.id=id;
