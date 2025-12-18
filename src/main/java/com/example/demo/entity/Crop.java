@@ -1,8 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*; 
-
+import lombok.*;
 @Entity
 public class Crop {
     @Id
