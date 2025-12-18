@@ -26,7 +26,41 @@ package com.example.demo.entity;
 
     }
     public void setId(Long id){
-        this.id
+        this.id=id;
+    
     }
+    public Long getName(){
+        return name;
+
+    }
+    public void setName(String name){
+        this.name=name;
+    
+    }
+    public Long getEmail(){
+        return email;
+
+    }
+    public void setEmail(String email){
+        this.email=email;
+    
+    }
+    public Long getPassword(){
+        return password;
+
+    }
+    public void setPassword(String Password){
+        this.password=password;
+    
+    }
+    public Long getRole(){
+        return role;
+
+    }
+    public void setRole(String role){
+        this.email=role;
+    
+    }
+
 
  }
