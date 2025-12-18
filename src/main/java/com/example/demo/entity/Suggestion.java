@@ -44,7 +44,7 @@ public class Suggestion {
 
     public void setSuggestedFertilizers(String suggestedFertilizers) {
         this.suggestedFertilizers = suggestedFertilizers;
-    }
+    }demo/src/main/java/com/example/demo/config
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
