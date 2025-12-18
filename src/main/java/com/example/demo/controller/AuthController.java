@@ -8,4 +8,10 @@ import com.example.demo.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
-public class 
+public class AuthController{
+    @Autowired
+    private UserService userservice;
+
+    @Autowired
+    
+}
