@@ -4,4 +4,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncprder;
 import org.springframework.web.bind.annotataion.*;
 
 import com.example.demo.entity.User;
-import com.example.demo.service.UserSer
+import com.example.demo.service.UserService;
+
+@RestController
+@RequestMapping("/auth")
+public class 
