@@ -1,18 +1,28 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-import jakarta.validation.constraints.*; 
-import jakarta.persistence.*; 
-
 @Entity
+@Table(name = "suggestions")
 public class Suggestion {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Farm farm;
+
+    @Column(length = 1000)
     private String suggestedCrops;
+
+    @Column(length = 1000)
     private String suggestedFertilizers;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    
     public Suggestion() {
     }
 

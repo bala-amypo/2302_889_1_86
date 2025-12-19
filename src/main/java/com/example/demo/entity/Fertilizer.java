@@ -14,14 +14,15 @@ public class Fertilizer {
     private Long id;
 
     @NotBlank
-    @Size(max = 100, message = "Fertilizer name must not exceed 100 characters")
+    @Size(max = 100)
     private String name;
 
-    @NotBlank(message = "NPK ratio must not be blank")
+    @NotBlank
     private String npkRatio;
 
-    @NotBlank(message = "Recommended crops must not be blank")
-    @Size(max = 500, message = "Recommended crops must not exceed 500 characters")
+    @NotBlank
+    @Size(max = 500)
+      private String recommendedForCrops;
 
     
     public Fertilizer() {
