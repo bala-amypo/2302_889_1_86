@@ -9,7 +9,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/suggestions")
 public class SuggestionController {
-
+    @Autowired
     private final SuggestionService suggestionService;
 
     @PostMapping("/{farmId}")
