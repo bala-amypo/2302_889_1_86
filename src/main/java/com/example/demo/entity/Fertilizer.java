@@ -1,16 +1,28 @@
+
 package com.example.demo.entity;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
-
-@Table(name = "users")
+@Table(name = "fertilizers")
 public class Fertilizer {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
+    @Size(max = 100, message = "Fertilizer name must not exceed 100 characters")
     private String name;
+
+    @NotBlank(message = "NPK ratio must not be blank")
     private String npkRatio;
-    private String recommendedForCrops;
+
+    @NotBlank(message = "Recommended crops must not be blank")
+    @Size(max = 500, message = "Recommended crops must not exceed 500 characters")
+
     
     public Fertilizer() {
     }

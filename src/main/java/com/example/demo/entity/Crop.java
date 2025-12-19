@@ -1,4 +1,3 @@
-package com.example.demo.entity;
 
 package com.example.demo.entity;
 
@@ -9,37 +8,6 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.DecimalMax;
 
-@Entity
-@Table(name = "crops")
-public class Crop {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotBlank(message = "Crop name must not be blank")
-    @Size(max = 100, message = "Crop name must not exceed 100 characters")
-    private String name;
-
-    @NotNull(message = "Minimum suitable pH must not be null")
-    @DecimalMin(value = "2.0", inclusive = true, message = "Minimum pH must be >= 2.0")
-    @DecimalMax(value = "10.0", inclusive = true, message = "Minimum pH must be <= 10.0")
-    private Double suitablePHMin;
-
-    @NotNull(message = "Maximum suitable pH must not be null")
-    @DecimalMin(value = "2.0", inclusive = true, message = "Maximum pH must be >= 2.0")
-    @DecimalMax(value = "10.0", inclusive = true, message = "Maximum pH must be <= 10.0")
-    private Double suitablePHMax;
-
-    @NotNull(message = "Required water must not be null")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Water requirement must be >= 0")
-    @DecimalMax(value = "1000.0", inclusive = true, message = "Water requirement must be <= 1000")
-    private Double requiredWater;
-
-    @NotBlank(message = "Season must not be blank")
-    private String season;
-import jakarta.persistence.*;
-import lombok.*;
 @Entity
 
 @Table(name = "crops")
@@ -55,9 +23,16 @@ public class Crop {
     @DecimalMax(value = "10.0", inclusive = true, message = "Minimum pH must be <= 10.0")
     
      private Double suitablePHMin;
-     
+     @NotNull
+    @DecimalMin(value = "2.0", inclusive = true, message = "Maximum pH must be >= 2.0")
+    @DecimalMax(value = "10.0", inclusive = true, message = "Maximum pH must be <= 10.0")
      private Double suitablePHMax;
+     
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = true, message = "Water requirement must be >= 0")
+    @DecimalMax(value = "1000.0", inclusive = true, message = "Water requirement must be <= 1000")
      private Double requiredWater;
+     @NotBlank
      private String season;
 
      public Crop() {
