@@ -29,7 +29,7 @@ public class User {
 
 
     public User() {}
-
+    
 
     public Long getId() {
         return id;
@@ -53,13 +53,20 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-        
+    }  
     public String getADMIN() {
-        return ;
+        return ADMIN;
     }
 
-    public void setADMIN(String password) {
-        this.password = password;
+    public void setADMIN(String aDMIN) {
+        this.ADMIN = aDMIN;
     }
+         
+    public String getUSER() {
+        return USER;
+    }
+
+    public void setUSER(String uSER) {
+        this.USER = uSER;
     }
 }
