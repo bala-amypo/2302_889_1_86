@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.entity.Suggestion;
 import com.example.demo.service.SuggestionService;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @RestController
