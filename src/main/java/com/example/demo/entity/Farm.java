@@ -4,14 +4,22 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*; 
 
 @Entity
+
+@Table(name = "farms")
 public class Farm {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @NotBlank
+    @Max(100)
     private String name;
+    @NotNull
     @Max(10)
     private Double soilPH;
+    @NotNull
+
     private Double waterLevel ;
+    @NotBlank
     private String season;
     
     
