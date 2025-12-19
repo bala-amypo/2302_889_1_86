@@ -10,7 +10,7 @@ import java.util.List;
 @RequestMapping("/suggestions")
 public class SuggestionController {
     @Autowired
-    private final SuggestionService suggestionService;
+    SuggestionService suggestionService;
 
     @PostMapping("/{farmId}")
     public Suggestion generateSuggestion(@PathVariable Long farmId) {
