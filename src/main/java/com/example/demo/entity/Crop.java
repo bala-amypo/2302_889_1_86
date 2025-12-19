@@ -3,11 +3,18 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 @Entity
+
+@Table(name = "crops")
 public class Crop {
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @NotBlank
+    @Max(100)
     private String name;
-    
+    @NotNull
+     @Min(value = 0, message = "Value must be at least 0")
+    @Max(value = 100, message = "Value must not exceed 100")
      private Double suitablePHMin;
      private Double suitablePHMax;
      private Double requiredWater;
