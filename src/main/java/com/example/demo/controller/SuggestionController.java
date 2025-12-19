@@ -22,7 +22,7 @@ public class SuggestionController {
     }
 
     @GetMapping("/farm/{farmId}")
-    public List<Suggestion> listFarmSuggestions(@PathVariable Long farmId) {
-        return suggestionService.getSuggestionsByFarm(farmId);
+    public List<Suggestion> getSuggestionByFarm(@PathVariable Long farmId) {
+        return suggestionService.getSuggestionByFarm(farmId);
     }
 }
