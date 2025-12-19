@@ -1,7 +1,9 @@
 
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
+import jakarta.persis
+import jakarta.validation.constraints.Size;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.DecimalMax;
@@ -18,7 +20,7 @@ public class Farm {
     @Column(length = 100)
     private String name;
     @NotNull
-    @Max(10)
+    @Size(max=10)
     private Double soilPH;
     @NotNull
     @DecimalMin(value = "0.0", inclusive = true, message = "Water level must be >= 0")

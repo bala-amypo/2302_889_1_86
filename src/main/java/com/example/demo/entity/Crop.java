@@ -19,7 +19,7 @@ public class Crop {
      @Size(max = 100)
     private String name;
     @NotNull
-     @DecimalMin(value = "2.0", inclusive = true, message = "Minimum pH must be >= 2.0")
+    @DecimalMin(value = "2.0", inclusive = true, message = "Minimum pH must be >= 2.0")
     @DecimalMax(value = "10.0", inclusive = true, message = "Minimum pH must be <= 10.0")
     
      private Double suitablePHMin;
