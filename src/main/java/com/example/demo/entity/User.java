@@ -11,16 +11,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    
+    @Max(100)
     private String name;
 
     @Email
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
     @NotBlank
+    @Min(6)
     private String password;
+
+    @NotBla
+    private String ADMIN;
+    private String USER;
+
 
     public User() {}
 
