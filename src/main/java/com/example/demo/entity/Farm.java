@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 @Entity
 public class Farm {
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     private String name;
     @Max(10)
