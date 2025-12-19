@@ -11,7 +11,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    @Max(100)
+    @Size(max = 100)
     private String name;
 
     @Email
@@ -20,7 +20,7 @@ public class User {
     private String email;
 
     @NotBlank
-    @Min(6)
+    @Size(min=6)
     private String password;
 
     @NotBlank

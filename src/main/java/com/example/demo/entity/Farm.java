@@ -1,8 +1,39 @@
+
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*; 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 
+@Entity
+@Table(name = "farms")
+public class Farm {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Many-to-One relationship with User
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User owner;
+
+    @NotBlank(message = "Farm name must not be blank")
+    @Column(length = 100)
+    private String name;
+
+    @NotNull(message = "Soil pH must not be null")
+    private Double soilPH;
+
+    @NotNull(message = "Water level must not be null")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Water level must be >= 0")
+    @DecimalMax(value = "100.0", inclusive = true, message = "Water level must be <= 100")
+    private Double waterLevel;
+
+    @NotBlank(message = "Season must not be blank")
+    private String season;
 @Entity
 
 @Table(name = "farms")
@@ -11,13 +42,14 @@ public class Farm {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    @Max(100)
+    @Column(length = 100)
     private String name;
     @NotNull
     @Max(10)
     private Double soilPH;
     @NotNull
-
+    @DecimalMin(value = "0.0", inclusive = true, message = "Water level must be >= 0")
+    @DecimalMax(value = "100.0", inclusive = true, message = "Water level must be <= 100")
     private Double waterLevel ;
     @NotBlank
     private String season;
