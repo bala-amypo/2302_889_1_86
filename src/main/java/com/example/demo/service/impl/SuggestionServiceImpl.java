@@ -40,7 +40,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     }
 
     @Override
-    public List<Suggestion> getSuggestionsByFarm(Long farmId) {
+    public List<Suggestion> getSuggestionByFarm(Long farmId) {
         return suggestionRepository.findByFarmId(farmId);
     }
 }
