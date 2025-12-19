@@ -23,12 +23,13 @@ public class User {
     @Min(6)
     private String password;
 
-    @NotBla
+    @NotBlank
     private String ADMIN;
     private String USER;
 
 
     public User() {}
+
 
     public Long getId() {
         return id;
@@ -52,5 +53,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+        
+    public String getADMIN() {
+        return ;
+    }
+
+    public void setADMIN(String password) {
+        this.password = password;
+    }
     }
 }
