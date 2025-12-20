@@ -1,3 +1,4 @@
+
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -6,77 +7,48 @@ import jakarta.validation.constraints.*;
 @Entity
 @Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotBlank
     @Size(max = 100)
     private String name;
 
-    @Email
     @NotBlank
+    @Email
     @Column(unique = true)
     private String email;
 
     @NotBlank
-    @Size(min=6)
     private String password;
 
     @NotBlank
-    private String ADMIN;
-    private String USER;
-
+    private String role = "USER"; // USER or ADMIN
 
     public User() {}
 
-     
-    public User(Long id,String name,String email,String password,String aDMIN,String uSER){
-        this.id=id;
-        this.name=name;
-        this.email=email;
-        this.password=password;
-        ADMIN=aDMIN;
-        USER=uSER;
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
+    public User(Long id, String name, String email, String password, String role) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
+        this.name = name;
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
-    }  
-    public String getADMIN() {
-        return ADMIN;
+        this.role = role;
     }
 
-    public void setADMIN(String aDMIN) {
-        this.ADMIN = aDMIN;
-    }
-         
-    public String getUSER() {
-        return USER;
-    }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setUSER(String uSER) {
-        this.USER = uSER;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }

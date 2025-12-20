@@ -1,119 +1,60 @@
 
-// @Entity
-// @Table(name = "crops")
-// public class Crop {
+package com.example.demo.entity;
 
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     private Long id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
-//     private String name;
-//     private Double phMin;
-//     private Double phMax;
-//     private Double requiredWater;
-//     private String season;
+@Entity
+@Table(name = "crops")
+public class Crop {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-//     // getters & setters (same style as Farm)
-// }
+    @NotBlank
+    @Size(max = 100)
+    private String name;
 
-// // package com.example.demo.entity;
+    @NotNull
+    private Double suitablePHMin;
 
-// // import jakarta.persistence.*;
-// // import jakarta.validation.constraints.NotBlank;
-// // import jakarta.validation.constraints.NotNull;
-// // import jakarta.validation.constraints.Size;
-// // import jakarta.validation.constraints.DecimalMin;
-// // import jakarta.validation.constraints.DecimalMax;
+    @NotNull
+    private Double suitablePHMax;
 
-// // @Entity
+    @NotNull
+    private Double requiredWater;
 
-// // @Table(name = "crops")
-// // public class Crop {
-// //     @Id
-// //     @GeneratedValue(strategy=GenerationType.IDENTITY)
-// //     private Long id;
-// //     @NotBlank
-// //      @Size(max = 100)
-// //     private String name;
-// //     @NotNull
-// //     @DecimalMin(value = "2.0", inclusive = true, message = "Minimum pH must be >= 2.0")
-// //     @DecimalMax(value = "10.0", inclusive = true, message = "Minimum pH must be <= 10.0")
-    
-// //      private Double suitablePHMin;
-// //      @NotNull
-// //     @DecimalMin(value = "2.0", inclusive = true, message = "Maximum pH must be >= 2.0")
-// //     @DecimalMax(value = "10.0", inclusive = true, message = "Maximum pH must be <= 10.0")
-// //      private Double suitablePHMax;
-     
-// //     @NotNull
-// //     @DecimalMin(value = "0.0", inclusive = true, message = "Water requirement must be >= 0")
-// //     @DecimalMax(value = "1000.0", inclusive = true, message = "Water requirement must be <= 1000")
-// //      private Double requiredWater;
-// //      @NotBlank
-// //      private String season;
+    @NotBlank
+    private String season;
 
-// //      public Crop() {
-// //      }
+    public Crop() {}
 
-// //      public Crop(Long id, String name, Double suitablePHMin, Double suitablePHMax, Double requiredWater, String season) {
-// //         this.id = id;
-// //         this.name = name;
-// //         this.suitablePHMin = suitablePHMin;
-// //         this.suitablePHMax = suitablePHMax;
-// //         this.requiredWater = requiredWater;
-// //         this.season = season;
-// //      }
+    public Crop(Long id, String name, Double suitablePHMin, Double suitablePHMax, 
+                Double requiredWater, String season) {
+        this.id = id;
+        this.name = name;
+        this.suitablePHMin = suitablePHMin;
+        this.suitablePHMax = suitablePHMax;
+        this.requiredWater = requiredWater;
+        this.season = season;
+    }
 
-// //      public Long getId() {
-// //          return id;
-// //      }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-// //      public void setId(Long id) {
-// //          this.id = id;
-// //      }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-// //      public String getName() {
-// //          return name;
-// //      }
+    public Double getSuitablePHMin() { return suitablePHMin; }
+    public void setSuitablePHMin(Double suitablePHMin) { this.suitablePHMin = suitablePHMin; }
 
-// //      public void setName(String name) {
-// //          this.name = name;
-// //      }
+    public Double getSuitablePHMax() { return suitablePHMax; }
+    public void setSuitablePHMax(Double suitablePHMax) { this.suitablePHMax = suitablePHMax; }
 
-// //      public Double getSuitablePHMin() {
-// //          return suitablePHMin;
-// //      }
+    public Double getRequiredWater() { return requiredWater; }
+    public void setRequiredWater(Double requiredWater) { this.requiredWater = requiredWater; }
 
-// //      public void setSuitablePHMin(Double suitablePHMin) {
-// //          this.suitablePHMin = suitablePHMin;
-// //      }
-
-// //      public Double getSuitablePHMax() {
-// //          return suitablePHMax;
-// //      }
-
-// //      public void setSuitablePHMax(Double suitablePHMax) {
-// //          this.suitablePHMax = suitablePHMax;
-// //      }
-
-// //      public Double getRequiredWater() {
-// //          return requiredWater;
-// //      }
-
-// //      public void setRequiredWater(Double requiredWater) {
-// //          this.requiredWater = requiredWater;
-// //      }
-
-// //      public String getSeason() {
-// //          return season;
-// //      }
-
-// //      public void setSeason(String season) {
-// //          this.season = season;
-// //      }
-
-     
-     
-     
-    
-// // }
+    public String getSeason() { return season; }
+    public void setSeason(String season) { this.season = season; }
+}
