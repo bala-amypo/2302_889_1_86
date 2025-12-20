@@ -1,25 +1,20 @@
 package com.example.demo.controller;
 
-import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.entity.User;
+import com.example.demo.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService userService;
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/register")
-    public Object register(@RequestBody Object user) {
-        return userService.register((com.example.demo.entity.User) user);
-    }
-
-    @PostMapping("/login")
-    public Object login(@RequestParam String email) {
-        return userService.findByEmail(email);
+    public User register(@RequestBody User user) {
+        return userService.saveUser(user);  // ✅ FIX
     }
 }
