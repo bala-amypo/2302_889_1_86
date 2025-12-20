@@ -1,53 +1,43 @@
+// UserServiceImpl.java - com.example.demo.service.impl
 package com.example.demo.service.impl;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
+    
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserRepository userRepository;
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
-    public User saveUser(User user) {
+    public User registerUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getRole() == null) {
+            user.setRole("USER");
+        }
         return userRepository.save(user);
     }
 
     @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    // @Override
-    // public User updateUser(Long id, User user) {
-    //     User existingUser = userRepository.findById(id).orElse(null);
-    //     if (existingUser != null) {
-    //         existingUser.setName(user.getName());
-    //         existingUser.setEmail(user.getEmail());
-    //         return userRepository.save(existingUser);
-    //     }
-    //     return null;
-    // }
-
-    // @Override
-    // public void deleteUser(Long id) {
-    //     userRepository.deleteById(id);
-    // }
-
-    @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 }

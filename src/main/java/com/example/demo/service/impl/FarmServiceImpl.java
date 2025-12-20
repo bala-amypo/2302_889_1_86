@@ -1,74 +1,38 @@
+// FarmServiceImpl.java - com.example.demo.service.impl
 package com.example.demo.service.impl;
-
-import java.util.List;
-
-import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Farm;
 import com.example.demo.repository.FarmRepository;
 import com.example.demo.service.FarmService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
+@Transactional
 public class FarmServiceImpl implements FarmService {
+    
+    private final FarmRepository farmRepository;
 
-    private final FarmRepository repository;
-
-    public FarmServiceImpl(FarmRepository repository) {
-        this.repository = repository;
+    @Autowired
+    public FarmServiceImpl(FarmRepository farmRepository) {
+        this.farmRepository = farmRepository;
     }
 
     @Override
-    public Farm save(Farm farm) {
-        return repository.save(farm);
+    public Farm createFarm(Farm farm, Long ownerId) {
+        return farmRepository.save(farm);
     }
 
     @Override
-    public List<Farm> findAll() {
-        return repository.findAll();
+    public List<Farm> getFarmsByOwner(Long ownerId) {
+        return farmRepository.findByOwnerId(ownerId);
     }
 
     @Override
-    public Farm findById(Long id) {
-        return repository.findById(id).orElse(null);
+    public Farm getFarmById(Long farmId) {
+        return farmRepository.findById(farmId).orElse(null);
     }
 }
-// package com.example.demo.service.impl;
-
-// import com.example.demo.entity.Farm;
-// import com.example.demo.entity.User;
-// import com.example.demo.repository.FarmRepository;
-// import com.example.demo.repository.UserRepository;
-// import com.example.demo.service.FarmService;
-// import lombok.RequiredArgsConstructor;
-// import org.springframework.stereotype.Service;
-// import org.springframework.web.server.ResponseStatusException;
-// import java.util.List;
-// import static org.springframework.http.HttpStatus.NOT_FOUND;
-
-// @Service
-// @RequiredArgsConstructor
-// public class FarmServiceImpl implements FarmService {
-
-//     private final FarmRepository farmRepository;
-//     private final UserRepository userRepository;
-
-//     @Override
-//     public Farm createFarm(Farm farm, Long ownerId) {
-//         User owner = userRepository.findById(ownerId)
-//                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
-//         farm.setOwner(owner);
-//         return farmRepository.save(farm);
-//     }
-
-//     @Override
-//     public List<Farm> getFarmsByOwner(Long ownerId){
-//         return farmRepository.findByOwnerId(ownerId);
-//     }
-
-//     @Override
-//     public Farm getFarmById(Long farmId) {
-//         return farmRepository.findById(farmId)
-//                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));
-//     }
-// }
-
