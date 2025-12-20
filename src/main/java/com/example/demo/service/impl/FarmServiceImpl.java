@@ -1,3 +1,36 @@
+package com.example.demo.service.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.entity.Farm;
+import com.example.demo.repository.FarmRepository;
+import com.example.demo.service.FarmService;
+
+@Service
+public class FarmServiceImpl implements FarmService {
+
+    private final FarmRepository repository;
+
+    public FarmServiceImpl(FarmRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public Farm save(Farm farm) {
+        return repository.save(farm);
+    }
+
+    @Override
+    public List<Farm> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Farm findById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
 
 // package com.example.demo.service.impl;
 
