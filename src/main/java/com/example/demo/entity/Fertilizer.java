@@ -1,4 +1,4 @@
-// Fertilizer.java - com.example.demo.entity
+
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -22,10 +22,8 @@ public class Fertilizer {
     @Size(max = 500)
     private String recommendedForCrops;
 
-    // Default Constructor
     public Fertilizer() {}
 
-    // All Args Constructor
     public Fertilizer(Long id, String name, String npkRatio, String recommendedForCrops) {
         this.id = id;
         this.name = name;
@@ -33,7 +31,6 @@ public class Fertilizer {
         this.recommendedForCrops = recommendedForCrops;
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
