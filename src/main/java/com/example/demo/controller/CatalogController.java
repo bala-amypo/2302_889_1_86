@@ -40,3 +40,43 @@ public class CatalogController {
         return catalogService.findFertilizersForCrops(cropNames);
     }
 }
+ package com.example.demo.controller;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.entity.Crop;
+import com.example.demo.service.CropService;
+
+@RestController
+@RequestMapping("/crops")
+public class CropController {
+
+    private final CropService service;
+
+    public CropController(CropService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    public Crop create(@RequestBody Crop crop) {
+        return service.save(crop);
+    }
+
+    @GetMapping
+    public List<Crop> getAll() {
+        return service.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Crop getById(@PathVariable Long id) {
+        return service.findById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id) {
+        service.delete(id);
+        return "Crop deleted";
+    }
+}
