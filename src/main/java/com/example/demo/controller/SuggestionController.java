@@ -21,7 +21,7 @@ public class SuggestionController {
 
     @PostMapping
     public Suggestion createSuggestion(@RequestBody Suggestion suggestion) {
-        return suggestionService.saveSuggestion(suggestion);
+        return suggestionService.createSuggestion(suggestion);
     }
 
     @GetMapping
@@ -32,15 +32,5 @@ public class SuggestionController {
     @GetMapping("/{id}")
     public Suggestion getSuggestion(@PathVariable Long id) {
         return suggestionService.getSuggestion(id);
-    }
-
-    @PutMapping("/{id}")
-    public Suggestion updateSuggestion(@PathVariable Long id, @RequestBody Suggestion suggestion) {
-        return suggestionService.updateSuggestion(id, suggestion);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteSuggestion(@PathVariable Long id) {
-        suggestionService.deleteSuggestion(id);
     }
 }

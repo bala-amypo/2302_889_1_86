@@ -22,7 +22,7 @@ public class CatalogController {
 
     @PostMapping("/crops")
     public Crop createCrop(@RequestBody Crop crop) {
-        return catalogService.addCrop(crop);
+        return catalogService.createCrop(crop);
     }
 
     @GetMapping("/crops")
@@ -35,19 +35,9 @@ public class CatalogController {
         return catalogService.getCrop(id);
     }
 
-    @PutMapping("/crops/{id}")
-    public Crop updateCrop(@PathVariable Long id, @RequestBody Crop crop) {
-        return catalogService.updateCrop(id, crop);
-    }
-
-    @DeleteMapping("/crops/{id}")
-    public void deleteCrop(@PathVariable Long id) {
-        catalogService.deleteCrop(id);
-    }
-
     @PostMapping("/fertilizers")
     public Fertilizer createFertilizer(@RequestBody Fertilizer fertilizer) {
-        return catalogService.addFertilizer(fertilizer);
+        return catalogService.createFertilizer(fertilizer);
     }
 
     @GetMapping("/fertilizers")
@@ -58,15 +48,5 @@ public class CatalogController {
     @GetMapping("/fertilizers/{id}")
     public Fertilizer getFertilizer(@PathVariable Long id) {
         return catalogService.getFertilizer(id);
-    }
-
-    @PutMapping("/fertilizers/{id}")
-    public Fertilizer updateFertilizer(@PathVariable Long id, @RequestBody Fertilizer fertilizer) {
-        return catalogService.updateFertilizer(id, fertilizer);
-    }
-
-    @DeleteMapping("/fertilizers/{id}")
-    public void deleteFertilizer(@PathVariable Long id) {
-        catalogService.deleteFertilizer(id);
     }
 }
