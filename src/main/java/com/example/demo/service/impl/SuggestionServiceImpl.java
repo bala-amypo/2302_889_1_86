@@ -1,4 +1,45 @@
 
+package com.example.demo.service.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.entity.Suggestion;
+import com.example.demo.repository.SuggestionRepository;
+import com.example.demo.service.SuggestionService;
+
+@Service
+public class SuggestionServiceImpl implements SuggestionService {
+
+    private final SuggestionRepository repository;
+
+    public SuggestionServiceImpl(SuggestionRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public Suggestion save(Suggestion suggestion) {
+        return repository.save(suggestion);
+    }
+
+    @Override
+    public List<Suggestion> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Suggestion findById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+}
+
+
 // package com.example.demo.service.impl;
 
 // import com.example.demo.entity.Farm;
