@@ -1,8 +1,8 @@
-
 package com.example.demo.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
@@ -12,68 +12,42 @@ import com.example.demo.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository repository) {
-        this.repository = repository;
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 
     @Override
-    public User save(User user) {
-        return repository.save(user);
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
-    public List<User> findAll() {
-        return repository.findAll();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override
-    public User findById(Long id) {
-        return repository.findById(id).orElse(null);
+    public User updateUser(Long id, User user) {
+        User existingUser = userRepository.findById(id).orElse(null);
+        if (existingUser != null) {
+            existingUser.setName(user.getName());
+            existingUser.setEmail(user.getEmail());
+            return userRepository.save(existingUser);
+        }
+        return null;
     }
 
     @Override
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
-
-// package com.example.demo.service.impl;
-
-// import com.example.demo.entity.User;
-// import com.example.demo.repository.UserRepository;
-// import com.example.demo.service.UserService;
-// import lombok.RequiredArgsConstructor;
-// import org.springframework.stereotype.Service;
-// import org.springframework.web.server.ResponseStatusException;
-
-// import static org.springframework.http.HttpStatus.BAD_REQUEST;
-
-// @Service
-// @RequiredArgsConstructor
-// public class UserServiceImpl implements UserService {
-
-//     private final UserRepository userRepository;
-
-//     @Override
-//     public User register(User user) {
-//         if (userRepository.existsByEmail(user.getEmail())) {
-//             throw new ResponseStatusException(BAD_REQUEST, "Email");
-//         }
-//         user.setPassword(encoder.encode(user.getPassword()));
-//         return userRepository.save(user);
-//     }
-
-//     @Override
-//     public User findByEmail(String email) {
-//         return userRepository.findByEmail(email)
-//                 .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "User not found"));
-//     }
-
-//     @Override
-//     public User findById(Long id) {
-//         return userRepository.findById(id)
-//                 .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST));
-//     }
-// }
