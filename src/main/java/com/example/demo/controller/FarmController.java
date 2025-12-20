@@ -1,20 +1,15 @@
 // FarmController.java - com.example.demo.controller
 package com.example.demo.controller;
 
-import com.example.demo.dto.FarmRequest;
 import com.example.demo.entity.Farm;
 import com.example.demo.service.FarmService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/farms")
-@Tag(name = "Farms")
 public class FarmController {
     
     private final FarmService farmService;
@@ -25,30 +20,27 @@ public class FarmController {
     }
 
     @PostMapping
-    public ResponseEntity<Farm> createFarm(@RequestBody FarmRequest req, Authentication auth) {
-        Farm farm = new Farm();
-        farm.setName(req.getName());
-        farm.setSoilPH(req.getSoilPH());
-        farm.setWaterLevel(req.getWaterLevel());
-        farm.setSeason(req.getSeason());
-        
-        String email = (String) auth.getPrincipal();
-        User user = userService.findByEmail(email); // Assuming userService injected
-        Farm createdFarm = farmService.createFarm(farm, user.getId());
-        return ResponseEntity.ok(createdFarm);
+    public Farm createFarm(@RequestBody Farm farm) {
+        return farmService.createFarm(farm);
     }
 
     @GetMapping
-    public ResponseEntity<List<Farm>> listFarms(Authentication auth) {
-        String email = (String) auth.getPrincipal();
-        User user = userService.findByEmail(email);
-        List<Farm> farms = farmService.getFarmsByOwner(user.getId());
-        return ResponseEntity.ok(farms);
+    public List<Farm> getAllFarms() {
+        return farmService.getAllFarms();
     }
 
-    @GetMapping("/{farmId}")
-    public ResponseEntity<Farm> getFarm(@PathVariable Long farmId) {
-        Farm farm = farmService.getFarmById(farmId);
-        return ResponseEntity.ok(farm);
+    @GetMapping("/{id}")
+    public Farm getFarm(@PathVariable Long id) {
+        return farmService.getFarmById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Farm updateFarm(@PathVariable Long id, @RequestBody Farm farm) {
+        return farmService.updateFarm(id, farm);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteFarm(@PathVariable Long id) {
+        farmService.deleteFarm(id);
     }
 }
