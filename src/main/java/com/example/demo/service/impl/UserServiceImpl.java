@@ -41,10 +41,10 @@ public class UserServiceImpl implements UserService {
     //     return null;
     // }
 
-    @Override
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }
+    // @Override
+    // public void deleteUser(Long id) {
+    //     userRepository.deleteById(id);
+    // }
 
     @Override
     public User findByEmail(String email) {
