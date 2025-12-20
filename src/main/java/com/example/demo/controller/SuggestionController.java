@@ -1,68 +1,43 @@
-// package com.example.demo.controller;
-
-// import com.example.demo.entity.Suggestion;
-// import com.example.demo.service.SuggestionService;
-// import org.springframework.web.bind.annotation.*;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import java.util.List;
-
-// @RestController
-// @RequestMapping("/suggestions")
-// public class SuggestionController {
-//     @Autowired
-//     SuggestionService suggestionService;
-
-//     @PostMapping("/{farmId}")
-//     public Suggestion generateSuggestion(@PathVariable Long farmId) {
-//         return suggestionService.generateSuggestion(farmId);
-//     }
-//     @GetMapping("/{suggestionId}")
-//     public Suggestion getSuggestion(@PathVariable Long suggestionId) {
-//         return suggestionService.getSuggestion(suggestionId);
-//     }
-
-//     @GetMapping("/farm/{farmId}")
-//     public List<Suggestion> getSuggestionByFarm(@PathVariable Long farmId) {
-//         return suggestionService.getSuggestionByFarm(farmId);
-//     }
-// }
+// SuggestionController.java - com.example.demo.controller
 package com.example.demo.controller;
-
-import java.util.List;
-
-import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.Suggestion;
 import com.example.demo.service.SuggestionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/suggestions")
+@Tag(name = "Suggestions")
 public class SuggestionController {
+    
+    private final SuggestionService suggestionService;
 
-    private final SuggestionService service;
-
-    public SuggestionController(SuggestionService service) {
-        this.service = service;
+    @Autowired
+    public SuggestionController(SuggestionService suggestionService) {
+        this.suggestionService = suggestionService;
     }
 
-    @PostMapping
-    public Suggestion create(@RequestBody Suggestion suggestion) {
-        return service.save(suggestion);
+    @PostMapping("/{farmId}")
+    public ResponseEntity<Suggestion> generateSuggestion(@PathVariable Long farmId, Authentication auth) {
+        Suggestion suggestion = suggestionService.generateSuggestion(farmId);
+        return ResponseEntity.ok(suggestion);
     }
 
-    @GetMapping
-    public List<Suggestion> getAll() {
-        return service.findAll();
+    @GetMapping("/{suggestionId}")
+    public ResponseEntity<Suggestion> getSuggestion(@PathVariable Long suggestionId) {
+        Suggestion suggestion = suggestionService.getSuggestion(suggestionId);
+        return ResponseEntity.ok(suggestion);
     }
 
-    @GetMapping("/{id}")
-    public Suggestion getById(@PathVariable Long id) {
-        return service.findById(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-        service.delete(id);
-        return "Suggestion deleted";
+    @GetMapping("/farm/{farmId}")
+    public ResponseEntity<List<Suggestion>> getSuggestionsByFarm(@PathVariable Long farmId) {
+        List<Suggestion> suggestions = suggestionService.getSuggestionsByFarm(farmId);
+        return ResponseEntity.ok(suggestions);
     }
 }

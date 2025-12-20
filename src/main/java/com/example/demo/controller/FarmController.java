@@ -1,69 +1,54 @@
+// FarmController.java - com.example.demo.controller
 package com.example.demo.controller;
 
-import java.util.List;
-import org.springframework.web.bind.annotation.*;
+import com.example.demo.dto.FarmRequest;
 import com.example.demo.entity.Farm;
 import com.example.demo.service.FarmService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/farms")
+@Tag(name = "Farms")
 public class FarmController {
+    
+    private final FarmService farmService;
 
-    private final FarmService service;
-
-    public FarmController(FarmService service) {
-        this.service = service;
+    @Autowired
+    public FarmController(FarmService farmService) {
+        this.farmService = farmService;
     }
 
     @PostMapping
-    public Farm create(@RequestBody Farm farm) {
-        return service.save(farm);
+    public ResponseEntity<Farm> createFarm(@RequestBody FarmRequest req, Authentication auth) {
+        Farm farm = new Farm();
+        farm.setName(req.getName());
+        farm.setSoilPH(req.getSoilPH());
+        farm.setWaterLevel(req.getWaterLevel());
+        farm.setSeason(req.getSeason());
+        
+        String email = (String) auth.getPrincipal();
+        User user = userService.findByEmail(email); // Assuming userService injected
+        Farm createdFarm = farmService.createFarm(farm, user.getId());
+        return ResponseEntity.ok(createdFarm);
     }
 
     @GetMapping
-    public List<Farm> getAll() {
-        return service.findAll();
+    public ResponseEntity<List<Farm>> listFarms(Authentication auth) {
+        String email = (String) auth.getPrincipal();
+        User user = userService.findByEmail(email);
+        List<Farm> farms = farmService.getFarmsByOwner(user.getId());
+        return ResponseEntity.ok(farms);
     }
 
-    @GetMapping("/{id}")
-    public Farm get(@PathVariable Long id) {
-        return service.findById(id);
+    @GetMapping("/{farmId}")
+    public ResponseEntity<Farm> getFarm(@PathVariable Long farmId) {
+        Farm farm = farmService.getFarmById(farmId);
+        return ResponseEntity.ok(farm);
     }
-
-    
 }
-
-
-// package com.example.demo.controller;
-
-// import com.example.demo.entity.Farm;
-// import com.example.demo.service.FarmService;
-// import org.springframework.web.bind.annotation.*;
-
-// import java.util.List;
-
-// @RestController
-// @RequestMapping("/farms")
-// public class FarmController {
-
-//     private final FarmService farmService;
-
-//     public FarmController(FarmService farmService) {
-//         this.farmService = farmService;
-//     }
-
-//     @PostMapping
-//     public Farm createFarm(@RequestBody Farm farm, @RequestParam Long ownerId) {
-//         return farmService.createFarm(farm, ownerId);
-//     }
-
-//     @GetMapping
-//     public List<Farm> listFarms(@RequestParam Long ownerId) {
-//         return farmService.getFarmsByOwner(ownerId);
-//     }
-
-//     @GetMapping("/{farmId}")
-//     public Farm getFarm(@PathVariable Long farmId) {
-//         return farmService.getFarmById(farmId);
-//     }
-// }
