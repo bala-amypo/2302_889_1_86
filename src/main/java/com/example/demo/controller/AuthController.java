@@ -1,4 +1,4 @@
-// AuthController.java - com.example.demo.controller (for User operations)
+// AuthController.java - com.example.demo.controller (Updated)
 package com.example.demo.controller;
 
 import com.example.demo.entity.User;
@@ -32,15 +32,5 @@ public class AuthController {
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
         return userService.findById(id);
-    }
-
-    @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User user) {
-        return userService.updateUser(id, user);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
     }
 }

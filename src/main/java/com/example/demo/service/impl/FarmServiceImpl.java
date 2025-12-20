@@ -22,17 +22,17 @@ public class FarmServiceImpl implements FarmService {
     }
 
     @Override
-    public Farm createFarm(Farm farm, Long ownerId) {
+    public Farm createFarm(Farm farm) {
         return farmRepository.save(farm);
     }
 
     @Override
-    public List<Farm> getFarmsByOwner(Long ownerId) {
-        return farmRepository.findByOwnerId(ownerId);
+    public List<Farm> getAllFarms() {
+        return farmRepository.findAll();
     }
 
     @Override
-    public Farm getFarmById(Long farmId) {
-        return farmRepository.findById(farmId).orElse(null);
+    public Farm getFarmById(Long id) {
+        return farmRepository.findById(id).orElse(null);
     }
 }
