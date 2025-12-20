@@ -31,7 +31,7 @@ public class FarmServiceImpl implements FarmService {
     public Farm findById(Long id) {
         return repository.findById(id).orElse(null);
     }
-
+}
 // package com.example.demo.service.impl;
 
 // import com.example.demo.entity.Farm;
