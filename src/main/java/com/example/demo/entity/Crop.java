@@ -39,7 +39,6 @@ public class Crop {
         this.season = season;
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
