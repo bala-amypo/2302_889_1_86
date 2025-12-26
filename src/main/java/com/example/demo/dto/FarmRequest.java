@@ -1,26 +1,15 @@
+// FarmRequest.java
 package com.example.demo.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class FarmRequest {
-    @NotBlank
     private String name;
-
-    @NotNull
     private Double soilPH;
-
-    @NotNull
     private Double waterLevel;
-
-    @NotBlank
     private String season;
 }
