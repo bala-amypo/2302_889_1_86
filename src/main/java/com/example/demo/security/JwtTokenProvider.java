@@ -58,6 +58,7 @@ public class JwtTokenProvider {
     }
 
     private Jws<Claims> parseClaims(String token) {
+        // jjwt 0.9.1: parser() returns JwtParser directly [web:40]
         JwtParser parser = Jwts.parser().setSigningKey(secret);
         return parser.parseClaimsJws(token);
     }
