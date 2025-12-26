@@ -40,9 +40,9 @@ public class JwtTokenProvider {
 
     public Claims getClaimsFromToken(String token) {
         try {
-            return Jwts.parserBuilder()
+            // FIXED: parserBuilder() -> parser() for JJWT 0.12.6
+            return Jwts.parser()
                     .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
-                    .build()
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
@@ -50,7 +50,6 @@ public class JwtTokenProvider {
         }
     }
 
-    // THIS METHOD WAS MISSING - adds getUserId(String token)
     public Long getUserId(String token) {
         return getClaimsFromToken(token).get("id", Long.class);
     }
