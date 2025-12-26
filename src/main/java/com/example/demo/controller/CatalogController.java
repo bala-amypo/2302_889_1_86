@@ -1,3 +1,4 @@
+// CatalogController.java
 package com.example.demo.controller;
 
 import com.example.demo.dto.CropRequest;
@@ -5,63 +6,72 @@ import com.example.demo.dto.FertilizerRequest;
 import com.example.demo.entity.Crop;
 import com.example.demo.entity.Fertilizer;
 import com.example.demo.service.CatalogService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
+import java.util.*;
 
 @RestController
-@RequestMapping("/api/catalog")
+@RequestMapping("/catalog")
 public class CatalogController {
-    
-    @Autowired
-    private CatalogService catalogService;
-    
+
+    private final CatalogService catalogService;
+
     public CatalogController(CatalogService catalogService) {
         this.catalogService = catalogService;
     }
-    
+
+    private boolean isAdmin(Authentication auth) {
+        if (auth == null) return false;
+        for (GrantedAuthority a : auth.getAuthorities()) {
+            if ("ROLE_ADMIN".equals(a.getAuthority())) return true;
+        }
+        return false;
+    }
+
     @PostMapping("/crops")
-    public ResponseEntity<Crop> addCrop(@RequestBody CropRequest request, Authentication auth) {
-        if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            return ResponseEntity.status(403).build();
+    public ResponseEntity<Crop> addCrop(@RequestBody CropRequest req,
+                                        Authentication auth) {
+        if (!isAdmin(auth)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        Crop crop = new Crop(
-            request.getName(),
-            request.getSuitablePHMin(),
-            request.getSuitablePHMax(),
-            request.getRequiredWater(),
-            request.getSeason()
-        );
-        Crop saved = catalogService.addCrop(crop);
-        return ResponseEntity.ok(saved);
+        Crop crop = Crop.builder()
+                .name(req.getName())
+                .suitablePHMin(req.getSuitablePHMin())
+                .suitablePHMax(req.getSuitablePHMax())
+                .requiredWater(req.getRequiredWater())
+                .season(req.getSeason())
+                .build();
+        return ResponseEntity.ok(catalogService.addCrop(crop));
     }
-    
+
     @PostMapping("/fertilizers")
-    public ResponseEntity<Fertilizer> addFertilizer(@RequestBody FertilizerRequest request, Authentication auth) {
-        if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            return ResponseEntity.status(403).build();
+    public ResponseEntity<Fertilizer> addFertilizer(@RequestBody FertilizerRequest req,
+                                                    Authentication auth) {
+        if (!isAdmin(auth)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        Fertilizer fertilizer = new Fertilizer(
-            request.getName(),
-            request.getNpkRatio(),
-            request.getRecommendedForCrops()
-        );
-        Fertilizer saved = catalogService.addFertilizer(fertilizer);
-        return ResponseEntity.ok(saved);
+        Fertilizer fert = Fertilizer.builder()
+                .name(req.getName())
+                .npkRatio(req.getNpkRatio())
+                .recommendedForCrops(req.getRecommendedForCrops())
+                .build();
+        return ResponseEntity.ok(catalogService.addFertilizer(fert));
     }
-    
+
     @GetMapping("/crops")
-    public ResponseEntity<List<Crop>> findCrops(@RequestParam Double ph, @RequestParam Double waterLevel, @RequestParam String season) {
-        List<Crop> crops = catalogService.findSuitableCrops(ph, waterLevel, season);
-        return ResponseEntity.ok(crops);
+    public ResponseEntity<List<Crop>> findCrops(@RequestParam Double soilPH,
+                                                @RequestParam Double waterLevel,
+                                                @RequestParam String season) {
+        return ResponseEntity.ok(catalogService.findSuitableCrops(soilPH, waterLevel, season));
     }
-    
+
     @GetMapping("/fertilizers")
     public ResponseEntity<List<Fertilizer>> findFerts(@RequestParam String crop) {
-        List<Fertilizer> fertilizers = catalogService.findFertilizersForCrops(List.of(crop));
-        return ResponseEntity.ok(fertilizers);
+        return ResponseEntity.ok(
+                catalogService.findFertilizersForCrops(List.of(crop))
+        );
     }
 }
