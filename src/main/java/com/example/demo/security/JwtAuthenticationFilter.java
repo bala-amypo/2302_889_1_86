@@ -3,7 +3,6 @@ package com.example.demo.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,9 +14,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
     private final JwtTokenProvider tokenProvider;
     
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-    
     public JwtAuthenticationFilter(JwtTokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
@@ -27,10 +23,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
         
         if (token != null && tokenProvider.validateToken(token)) {
-            String email = tokenProvider.getEmail(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            Long userId = tokenProvider.getUserId(token);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                ((CustomUserDetails) userDetails).getId(), null, userDetails.getAuthorities());
+                userId, null, null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         
