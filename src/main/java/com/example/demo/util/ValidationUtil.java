@@ -1,13 +1,13 @@
-// ValidationUtil.java
 package com.example.demo.util;
+
+import java.util.Set;
 
 public class ValidationUtil {
 
+    private static final Set<String> VALID =
+            Set.of("Kharif", "Rabi", "Summer");
+
     public static boolean validSeason(String season) {
-        if (season == null) return false;
-        String s = season.trim();
-        return s.equalsIgnoreCase("Kharif")
-                || s.equalsIgnoreCase("Rabi")
-                || s.equalsIgnoreCase("Zaid");
+        return season != null && VALID.contains(season);
     }
 }

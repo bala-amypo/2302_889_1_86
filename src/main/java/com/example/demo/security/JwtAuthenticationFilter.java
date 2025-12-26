@@ -1,14 +1,18 @@
-// JwtAuthenticationFilter.java
 package com.example.demo.security;
 
-import jakarta.servlet.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 
-public class JwtAuthenticationFilter implements Filter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -17,20 +21,24 @@ public class JwtAuthenticationFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response,
-                         FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
 
-        HttpServletRequest req = (HttpServletRequest) request;
-        String header = req.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             if (jwtTokenProvider.validateToken(token)) {
-                Long uid = jwtTokenProvider.getUserId(token);
-                PreAuthenticatedAuthenticationToken auth =
-                        new PreAuthenticatedAuthenticationToken(uid, token, null);
+                String email = jwtTokenProvider.getEmail(token);
+                String role = jwtTokenProvider.getRole(token);
+                var principal = new User(email, "",
+                        Collections.singleton(() -> "ROLE_" + role));
+                var auth = new UsernamePasswordAuthenticationToken(
+                        principal, null, principal.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }
