@@ -30,7 +30,7 @@ public class JwtTokenProvider {
                 .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .signWith(SignatureAlgorithm.HS256, secret.getBytes())
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
@@ -58,10 +58,8 @@ public class JwtTokenProvider {
     }
 
     private Jws<Claims> parseClaims(String token) {
-        // jjwt 0.11+ style: parserBuilder() -> build() -> parseClaimsJws [web:32][web:36]
-        return Jwts.parserBuilder()
-                .setSigningKey(secret.getBytes())
-                .build()
-                .parseClaimsJws(token);
+        // 0.9.1 API: parser() → JwtParser [web:40]
+        JwtParser parser = Jwts.parser().setSigningKey(secret);
+        return parser.parseClaimsJws(token);
     }
 }
