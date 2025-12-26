@@ -1,14 +1,14 @@
-
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.http.HttpServletRequest;  // jakarta, not javax
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Base64;  // Standard Base64
 
 @Component
 public class JwtTokenProvider {
@@ -26,7 +26,7 @@ public class JwtTokenProvider {
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))  // Use secret as-is
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
                 .compact();
     }
 
@@ -41,16 +41,17 @@ public class JwtTokenProvider {
     public Claims getClaimsFromToken(String token) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(jwtSecret.getBytes())
+                    .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            throw new RuntimeException("Invalid JWT token");
+            throw new RuntimeException("Invalid JWT token", e);
         }
     }
 
-    public Long getUserIdFromToken(String token) {
+    // THIS METHOD WAS MISSING - adds getUserId(String token)
+    public Long getUserId(String token) {
         return getClaimsFromToken(token).get("id", Long.class);
     }
 
