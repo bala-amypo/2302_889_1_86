@@ -40,11 +40,12 @@ public class JwtTokenProvider {
 
     public Claims getClaimsFromToken(String token) {
         try {
-            // FIXED: parserBuilder() -> parser() for JJWT 0.12.6
+            // CORRECT JJWT 0.12.6 syntax:
             return Jwts.parser()
-                    .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .verifyWith(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();  // Changed from getBody()
         } catch (Exception e) {
             throw new RuntimeException("Invalid JWT token", e);
         }
