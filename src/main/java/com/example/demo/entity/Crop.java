@@ -24,6 +24,37 @@ public class Crop {
         this.season = season;
     }
     
+    public static CropBuilder builder() {
+        return new CropBuilder();
+    }
+    
+    public static class CropBuilder {
+        private Long id;
+        private String name;
+        private Double suitablePHMin;
+        private Double suitablePHMax;
+        private Double requiredWater;
+        private String season;
+        
+        public CropBuilder id(Long id) { this.id = id; return this; }
+        public CropBuilder name(String name) { this.name = name; return this; }
+        public CropBuilder suitablePHMin(Double suitablePHMin) { this.suitablePHMin = suitablePHMin; return this; }
+        public CropBuilder suitablePHMax(Double suitablePHMax) { this.suitablePHMax = suitablePHMax; return this; }
+        public CropBuilder requiredWater(Double requiredWater) { this.requiredWater = requiredWater; return this; }
+        public CropBuilder season(String season) { this.season = season; return this; }
+        
+        public Crop build() {
+            Crop crop = new Crop();
+            crop.id = this.id;
+            crop.name = this.name;
+            crop.suitablePHMin = this.suitablePHMin;
+            crop.suitablePHMax = this.suitablePHMax;
+            crop.requiredWater = this.requiredWater;
+            crop.season = this.season;
+            return crop;
+        }
+    }
+    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     

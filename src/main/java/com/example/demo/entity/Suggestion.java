@@ -1,47 +1,75 @@
 package com.example.demo.entity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-public class Farm {
+public class Suggestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    private String name;
-    private Double soilPH;
-    private Double waterLevel;
-    private String season;
-    
     @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @JoinColumn(name = "farm_id")
+    private Farm farm;
     
-    public Farm() {}
+    private String suggestedCrops;
+    private String suggestedFertilizers;
+    private LocalDateTime createdAt;
     
-    public Farm(String name, Double soilPH, Double waterLevel, String season, User owner) {
-        this.name = name;
-        this.soilPH = soilPH;
-        this.waterLevel = waterLevel;
-        this.season = season;
-        this.owner = owner;
+    public Suggestion() {}
+    
+    public Suggestion(Farm farm, String suggestedCrops, String suggestedFertilizers) {
+        this.farm = farm;
+        this.suggestedCrops = suggestedCrops;
+        this.suggestedFertilizers = suggestedFertilizers;
+    }
+    
+    public static SuggestionBuilder builder() {
+        return new SuggestionBuilder();
+    }
+    
+    public static class SuggestionBuilder {
+        private Long id;
+        private Farm farm;
+        private String suggestedCrops;
+        private String suggestedFertilizers;
+        private LocalDateTime createdAt;
+        
+        public SuggestionBuilder id(Long id) { this.id = id; return this; }
+        public SuggestionBuilder farm(Farm farm) { this.farm = farm; return this; }
+        public SuggestionBuilder suggestedCrops(String suggestedCrops) { this.suggestedCrops = suggestedCrops; return this; }
+        public SuggestionBuilder suggestedFertilizers(String suggestedFertilizers) { this.suggestedFertilizers = suggestedFertilizers; return this; }
+        public SuggestionBuilder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
+        
+        public Suggestion build() {
+            Suggestion suggestion = new Suggestion();
+            suggestion.id = this.id;
+            suggestion.farm = this.farm;
+            suggestion.suggestedCrops = this.suggestedCrops;
+            suggestion.suggestedFertilizers = this.suggestedFertilizers;
+            suggestion.createdAt = this.createdAt;
+            return suggestion;
+        }
+    }
+    
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
     
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public Farm getFarm() { return farm; }
+    public void setFarm(Farm farm) { this.farm = farm; }
     
-    public Double getSoilPH() { return soilPH; }
-    public void setSoilPH(Double soilPH) { this.soilPH = soilPH; }
+    public String getSuggestedCrops() { return suggestedCrops; }
+    public void setSuggestedCrops(String suggestedCrops) { this.suggestedCrops = suggestedCrops; }
     
-    public Double getWaterLevel() { return waterLevel; }
-    public void setWaterLevel(Double waterLevel) { this.waterLevel = waterLevel; }
+    public String getSuggestedFertilizers() { return suggestedFertilizers; }
+    public void setSuggestedFertilizers(String suggestedFertilizers) { this.suggestedFertilizers = suggestedFertilizers; }
     
-    public String getSeason() { return season; }
-    public void setSeason(String season) { this.season = season; }
-    
-    public User getOwner() { return owner; }
-    public void setOwner(User owner) { this.owner = owner; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

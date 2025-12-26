@@ -3,28 +3,46 @@ package com.example.demo.entity;
 import javax.persistence.*;
 
 @Entity
-public class Farm {
+public class Fertilizer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     private String name;
-    private Double soilPH;
-    private Double waterLevel;
-    private String season;
+    private String npkRatio;
+    private String recommendedForCrops;
     
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    public Fertilizer() {}
     
-    public Farm() {}
-    
-    public Farm(String name, Double soilPH, Double waterLevel, String season, User owner) {
+    public Fertilizer(String name, String npkRatio, String recommendedForCrops) {
         this.name = name;
-        this.soilPH = soilPH;
-        this.waterLevel = waterLevel;
-        this.season = season;
-        this.owner = owner;
+        this.npkRatio = npkRatio;
+        this.recommendedForCrops = recommendedForCrops;
+    }
+    
+    public static FertilizerBuilder builder() {
+        return new FertilizerBuilder();
+    }
+    
+    public static class FertilizerBuilder {
+        private Long id;
+        private String name;
+        private String npkRatio;
+        private String recommendedForCrops;
+        
+        public FertilizerBuilder id(Long id) { this.id = id; return this; }
+        public FertilizerBuilder name(String name) { this.name = name; return this; }
+        public FertilizerBuilder npkRatio(String npkRatio) { this.npkRatio = npkRatio; return this; }
+        public FertilizerBuilder recommendedForCrops(String recommendedForCrops) { this.recommendedForCrops = recommendedForCrops; return this; }
+        
+        public Fertilizer build() {
+            Fertilizer fertilizer = new Fertilizer();
+            fertilizer.id = this.id;
+            fertilizer.name = this.name;
+            fertilizer.npkRatio = this.npkRatio;
+            fertilizer.recommendedForCrops = this.recommendedForCrops;
+            return fertilizer;
+        }
     }
     
     public Long getId() { return id; }
@@ -33,15 +51,9 @@ public class Farm {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     
-    public Double getSoilPH() { return soilPH; }
-    public void setSoilPH(Double soilPH) { this.soilPH = soilPH; }
+    public String getNpkRatio() { return npkRatio; }
+    public void setNpkRatio(String npkRatio) { this.npkRatio = npkRatio; }
     
-    public Double getWaterLevel() { return waterLevel; }
-    public void setWaterLevel(Double waterLevel) { this.waterLevel = waterLevel; }
-    
-    public String getSeason() { return season; }
-    public void setSeason(String season) { this.season = season; }
-    
-    public User getOwner() { return owner; }
-    public void setOwner(User owner) { this.owner = owner; }
+    public String getRecommendedForCrops() { return recommendedForCrops; }
+    public void setRecommendedForCrops(String recommendedForCrops) { this.recommendedForCrops = recommendedForCrops; }
 }
