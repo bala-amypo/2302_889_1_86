@@ -58,7 +58,7 @@ public class JwtTokenProvider {
     }
 
     private Jws<Claims> parseClaims(String token) {
-        // IMPORTANT: parser(), not parserBuilder()
+        // ONLY parser(), never parserBuilder()
         JwtParser parser = Jwts.parser().setSigningKey(secret);
         return parser.parseClaimsJws(token);
     }
