@@ -1,6 +1,6 @@
 // SuggestionServiceImpl.java
 package com.example.demo.service;
-
+import com.example.demo.service.*;
 import com.example.demo.entity.Crop;
 import com.example.demo.entity.Farm;
 import com.example.demo.entity.Fertilizer;
