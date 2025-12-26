@@ -47,43 +47,6 @@
 
 
 
-package com.example.demo.config;
-
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import io.swagger.v3.oas.annotations.security.SecuritySchemeType;
-import io.swagger.v3.oas.models.OpenAPI;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-@OpenAPIDefinition(
-        info = @Info(
-                title = "Crop & Fertilizer Suggestion API",
-                version = "1.0.0",
-                description = "REST API for providing intelligent crop and fertilizer suggestions based on farm conditions",
-                contact = @Contact(name = "Your Name", email = "you@example.com")
-        ),
-        security = @SecurityRequirement(name = "JWT")
-)
-@SecurityScheme(
-        name = "JWT",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT"
-)
-public class SwaggerConfig {
-
-    @Bean
-    public OpenAPI api() {
-        return new OpenAPI();
-    }
-}
-
-
 
 
 // // src/main/java/com/example/demo/config/SwaggerConfig.java
@@ -110,3 +73,39 @@ public class SwaggerConfig {
 //                 .build();
 //     }
 // }
+package com.example.demo.config;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SwaggerConfig {
+
+    @Bean
+    public OpenAPI api() {
+        final String securitySchemeName = "JWT";
+
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Crop & Fertilizer Suggestion API")
+                        .version("1.0.0")
+                        .description("REST API for providing intelligent crop and fertilizer suggestions based on farm conditions")
+                        .contact(new Contact()
+                                .name("Your Name")
+                                .email("you@example.com")))
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .components(new Components()
+                        .addSecuritySchemes(securitySchemeName,
+                                new SecurityScheme()
+                                        .name(securitySchemeName)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")));
+    }
+}

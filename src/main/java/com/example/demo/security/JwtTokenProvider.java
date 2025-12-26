@@ -2,6 +2,7 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -10,12 +11,14 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final String jwtSecret = "this-is-a-very-long-demo-secret-key-1234567890";
-    private final long jwtExpirationMs = 86400000L;
     private final Key key;
+    private final long jwtExpirationMs;
 
-    public JwtTokenProvider() {
-        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    public JwtTokenProvider(
+            @Value("${app.jwt.secret:ThisIsAReallyLongJwtSecretKeyForDemoProject123456}") String secret,
+            @Value("${app.jwt.expiration-ms:86400000}") long jwtExpirationMs) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.jwtExpirationMs = jwtExpirationMs;
     }
 
     public String createToken(Long userId, String email, String role) {
@@ -44,29 +47,22 @@ public class JwtTokenProvider {
     }
 
     public String getEmail(String token) {
-        return parseClaims(token).getSubject();
+        return parseClaims(token).getBody().get("email", String.class);
     }
 
     public Long getUserId(String token) {
-        Object v = parseClaims(token).get("userId");
-        if (v instanceof Integer i) {
-            return i.longValue();
-        }
-        if (v instanceof Long l) {
-            return l;
-        }
-        return Long.valueOf(v.toString());
+        Number n = parseClaims(token).getBody().get("userId", Number.class);
+        return n == null ? null : n.longValue();
     }
 
     public String getRole(String token) {
-        return (String) parseClaims(token).get("role");
+        return parseClaims(token).getBody().get("role", String.class);
     }
 
-    private Claims parseClaims(String token) {
+    private Jws<Claims> parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseClaimsJws(token);
     }
 }
