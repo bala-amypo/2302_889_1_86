@@ -1,54 +1,73 @@
-// JwtTokenProvider.java
+
 package com.example.demo.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import jakarta.servlet.http.HttpServletRequest;  // jakarta, not javax
 import java.util.Date;
+import java.util.Base64;  // Standard Base64
 
 @Component
 public class JwtTokenProvider {
 
-    private final String jwtSecret = "secret-key-demo";
-    private final long validityMs = 3600_000; // 1h
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    @Value("${jwt.expiration:3600000}")
+    private long jwtExpiration;
 
     public String createToken(Long userId, String email, String role) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + validityMs);
-
         return Jwts.builder()
                 .setSubject(email)
-                .claim("uid", userId)
+                .claim("id", userId)
                 .claim("role", role)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()))  // Use secret as-is
                 .compact();
+    }
+
+    public String getTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    public Claims getClaimsFromToken(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(jwtSecret.getBytes())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid JWT token");
+        }
+    }
+
+    public Long getUserIdFromToken(String token) {
+        return getClaimsFromToken(token).get("id", Long.class);
+    }
+
+    public String getUserEmailFromToken(String token) {
+        return getClaimsFromToken(token).getSubject();
+    }
+
+    public String getRoleFromToken(String token) {
+        return getClaimsFromToken(token).get("role", String.class);
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            getClaimsFromToken(token);
             return true;
-        } catch (JwtException | IllegalArgumentException ex) {
+        } catch (Exception e) {
             return false;
         }
-    }
-
-    private Claims getClaims(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret)
-                .parseClaimsJws(token).getBody();
-    }
-
-    public String getEmail(String token) {
-        return getClaims(token).getSubject();
-    }
-
-    public Long getUserId(String token) {
-        return getClaims(token).get("uid", Long.class);
-    }
-
-    public String getRole(String token) {
-        return getClaims(token).get("role", String.class);
     }
 }
