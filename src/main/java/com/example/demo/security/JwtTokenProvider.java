@@ -1,23 +1,21 @@
 package com.example.demo.security;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    private final Key key;
+    private final String secret;
     private final long jwtExpirationMs;
 
     public JwtTokenProvider(
             @Value("${app.jwt.secret:ThisIsAReallyLongJwtSecretKeyForDemoProject123456}") String secret,
             @Value("${app.jwt.expiration-ms:86400000}") long jwtExpirationMs) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.secret = secret;
         this.jwtExpirationMs = jwtExpirationMs;
     }
 
@@ -32,7 +30,7 @@ public class JwtTokenProvider {
                 .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .signWith(SignatureAlgorithm.HS256, key.getEncoded())
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
@@ -60,9 +58,8 @@ public class JwtTokenProvider {
     }
 
     private Jws<Claims> parseClaims(String token) {
-        // IMPORTANT: use parser(), not parserBuilder()
-        return Jwts.parser()
-                .setSigningKey(key.getEncoded())
-                .parseClaimsJws(token);
+        // IMPORTANT: parser(), not parserBuilder()
+        JwtParser parser = Jwts.parser().setSigningKey(secret);
+        return parser.parseClaimsJws(token);
     }
 }
