@@ -1,35 +1,47 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Farm;
 import com.example.demo.entity.User;
+import com.example.demo.repository.FarmRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class FarmServiceImpl implements FarmService {
     
-    @Autowired
-    private UserRepository userRepository;
+    private final FarmRepository farmRepository;
+    private final UserRepository userRepository;
     
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    
-    @Override
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    public FarmServiceImpl(FarmRepository farmRepository, UserRepository userRepository) {
+        this.farmRepository = farmRepository;
+        this.userRepository = userRepository;
     }
     
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
+    public Farm createFarm(Farm farm, Long ownerId) {
+        User owner = userRepository.findById(ownerId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
+        // Add validation for pH range
+        if (farm.getSoilPH() != null && (farm.getSoilPH() < 3.0 || farm.getSoilPH() > 10.0)) {
+            throw new IllegalArgumentException("Soil pH must be between 3.0 and 10.0");
+        }
+        
+        farm.setOwner(owner);
+        return farmRepository.save(farm);
     }
     
     @Override
-    public User findById(Long id) {
-        return userRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public Farm getFarmById(Long id) {
+        return farmRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Farm not found"));
+    }
+    
+    @Override
+    public List<Farm> getFarmsByOwner(Long ownerId) {
+        return farmRepository.findByOwnerId(ownerId);
     }
 }

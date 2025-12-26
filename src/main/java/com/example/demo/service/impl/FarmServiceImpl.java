@@ -12,16 +12,24 @@ import java.util.List;
 @Service
 public class FarmServiceImpl implements FarmService {
     
-    @Autowired
-    private FarmRepository farmRepository;
+    private final FarmRepository farmRepository;
+    private final UserRepository userRepository;
     
-    @Autowired
-    private UserRepository userRepository;
+    public FarmServiceImpl(FarmRepository farmRepository, UserRepository userRepository) {
+        this.farmRepository = farmRepository;
+        this.userRepository = userRepository;
+    }
     
     @Override
     public Farm createFarm(Farm farm, Long ownerId) {
         User owner = userRepository.findById(ownerId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
+        // Add validation for pH range
+        if (farm.getSoilPH() != null && (farm.getSoilPH() < 3.0 || farm.getSoilPH() > 10.0)) {
+            throw new IllegalArgumentException("Soil pH must be between 3.0 and 10.0");
+        }
+        
         farm.setOwner(owner);
         return farmRepository.save(farm);
     }
