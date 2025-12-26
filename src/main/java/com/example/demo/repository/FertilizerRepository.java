@@ -1,16 +1,13 @@
-// FertilizerRepository.java
 package com.example.demo.repository;
-
 import com.example.demo.entity.Fertilizer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository
 public interface FertilizerRepository extends JpaRepository<Fertilizer, Long> {
-
-    @Query("select f from Fertilizer f where lower(f.recommendedForCrops) like %?1%")
-    List<Fertilizer> findByCropName(String cropName);
+    @Query("SELECT f FROM Fertilizer f WHERE LOWER(f.recommendedForCrops) LIKE LOWER(CONCAT('%', :crop, '%'))")
+    List<Fertilizer> findByCropName(@Param("crop") String crop);
 }
