@@ -1,6 +1,5 @@
-// CatalogServiceImpl.java
 package com.example.demo.service;
-import com.example.demo.service.*;
+
 import com.example.demo.entity.Crop;
 import com.example.demo.entity.Fertilizer;
 import com.example.demo.exception.BadRequestException;
@@ -8,17 +7,16 @@ import com.example.demo.repository.CropRepository;
 import com.example.demo.repository.FertilizerRepository;
 import com.example.demo.util.ValidationUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
+import java.util.*;
 
 @Service
+@Transactional
 public class CatalogServiceImpl implements CatalogService {
 
     private final CropRepository cropRepository;
     private final FertilizerRepository fertilizerRepository;
-    private static final Pattern NPK_PATTERN = Pattern.compile("\\d+-\\d+-\\d+");
 
     public CatalogServiceImpl(CropRepository cropRepository,
                               FertilizerRepository fertilizerRepository) {
@@ -28,9 +26,9 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Crop addCrop(Crop crop) {
-        if (crop.getSuitablePHMin() != null && crop.getSuitablePHMax() != null
-                && crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
-            throw new BadRequestException("PH min");
+        if (crop.getSuitablePHMin() == null || crop.getSuitablePHMax() == null
+                || crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
+            throw new BadRequestException("PH min must be <= max");
         }
         if (!ValidationUtil.validSeason(crop.getSeason())) {
             throw new BadRequestException("Invalid season");
@@ -41,23 +39,26 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Fertilizer addFertilizer(Fertilizer fertilizer) {
         if (fertilizer.getNpkRatio() == null ||
-                !NPK_PATTERN.matcher(fertilizer.getNpkRatio()).matches()) {
-            throw new BadRequestException("NPK");
+                !fertilizer.getNpkRatio().matches("\\d+-\\d+-\\d+")) {
+            throw new BadRequestException("Invalid NPK format");
         }
         return fertilizerRepository.save(fertilizer);
     }
 
     @Override
-    public List<Crop> findSuitableCrops(Double soilPH, Double waterLevel, String season) {
-        return cropRepository.findSuitableCrops(soilPH, waterLevel, season);
+    public List<Crop> findSuitableCrops(Double ph, Double waterLevel, String season) {
+        return cropRepository.findSuitableCrops(ph, waterLevel, season);
     }
 
     @Override
     public List<Fertilizer> findFertilizersForCrops(List<String> cropNames) {
         if (cropNames == null || cropNames.isEmpty()) {
-            return Collections.emptyList();
+            return List.of();
         }
-        // very simple: query by first crop name
-        return fertilizerRepository.findByCropName(cropNames.get(0).toLowerCase());
+        Set<Fertilizer> result = new LinkedHashSet<>();
+        for (String name : cropNames) {
+            result.addAll(fertilizerRepository.findByCropName(name));
+        }
+        return new ArrayList<>(result);
     }
 }

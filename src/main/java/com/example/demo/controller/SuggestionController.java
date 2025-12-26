@@ -3,8 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.entity.Suggestion;
 import com.example.demo.service.SuggestionService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/suggestions")
@@ -16,23 +17,18 @@ public class SuggestionController {
         this.suggestionService = suggestionService;
     }
 
-    @PostMapping("/generate/{farmId}")
-    public ResponseEntity<Suggestion> generateSuggestion(
-            @PathVariable Long farmId, 
-            Authentication auth) {
-        
-        Long userId = (Long) auth.getPrincipal();
-        // Verify user owns the farm (add farm service check if needed)
-        
-        Suggestion suggestion = suggestionService.generateSuggestion(farmId);
-        return ResponseEntity.ok(suggestion);
+    @PostMapping("/{farmId}")
+    public ResponseEntity<Suggestion> generate(@PathVariable Long farmId) {
+        return ResponseEntity.ok(suggestionService.generateSuggestion(farmId));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Suggestion> getSuggestion(@PathVariable Long id) {
-        Suggestion suggestion = suggestionService.getSuggestion(id);
-        return suggestion != null ? 
-            ResponseEntity.ok(suggestion) : 
-            ResponseEntity.notFound().build();
+    @GetMapping("/{suggestionId}")
+    public ResponseEntity<Suggestion> getSuggestion(@PathVariable Long suggestionId) {
+        return ResponseEntity.ok(suggestionService.getSuggestion(suggestionId));
+    }
+
+    @GetMapping("/farm/{farmId}")
+    public ResponseEntity<List<Suggestion>> getByFarm(@PathVariable Long farmId) {
+        return ResponseEntity.ok(suggestionService.getSuggestionsByFarm(farmId));
     }
 }
