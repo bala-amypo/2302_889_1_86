@@ -1,47 +1,47 @@
-
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "fertilizers")
-public class Fertilizer {
+public class Farm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank
-    @Size(max = 100)
+    
     private String name;
-
-    @NotBlank
-    private String npkRatio;
-
-    @NotBlank
-    @Size(max = 500)
-    private String recommendedForCrops;
-
-    public Fertilizer() {}
-
-    public Fertilizer(Long id, String name, String npkRatio, String recommendedForCrops) {
-        this.id = id;
+    private Double soilPH;
+    private Double waterLevel;
+    private String season;
+    
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+    
+    public Farm() {}
+    
+    public Farm(String name, Double soilPH, Double waterLevel, String season, User owner) {
         this.name = name;
-        this.npkRatio = npkRatio;
-        this.recommendedForCrops = recommendedForCrops;
+        this.soilPH = soilPH;
+        this.waterLevel = waterLevel;
+        this.season = season;
+        this.owner = owner;
     }
-
+    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
+    
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
-    public String getNpkRatio() { return npkRatio; }
-    public void setNpkRatio(String npkRatio) { this.npkRatio = npkRatio; }
-
-    public String getRecommendedForCrops() { return recommendedForCrops; }
-    public void setRecommendedForCrops(String recommendedForCrops) { 
-        this.recommendedForCrops = recommendedForCrops; 
-    }
+    
+    public Double getSoilPH() { return soilPH; }
+    public void setSoilPH(Double soilPH) { this.soilPH = soilPH; }
+    
+    public Double getWaterLevel() { return waterLevel; }
+    public void setWaterLevel(Double waterLevel) { this.waterLevel = waterLevel; }
+    
+    public String getSeason() { return season; }
+    public void setSeason(String season) { this.season = season; }
+    
+    public User getOwner() { return owner; }
+    public void setOwner(User owner) { this.owner = owner; }
 }

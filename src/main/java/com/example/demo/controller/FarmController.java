@@ -1,36 +1,46 @@
-
 package com.example.demo.controller;
 
+import com.example.demo.dto.FarmRequest;
 import com.example.demo.entity.Farm;
 import com.example.demo.service.FarmService;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/farms")
+@RequestMapping("/api/farms")
 public class FarmController {
     
-    private final FarmService farmService;
-
     @Autowired
-    public FarmController(FarmService farmService) {
+    private FarmService farmService;
+    
+    @Autowired
+    private UserService userService;
+    
+    public FarmController(FarmService farmService, UserService userService) {
         this.farmService = farmService;
+        this.userService = userService;
     }
-
+    
     @PostMapping
-    public Farm createFarm(@RequestBody Farm farm) {
-        return farmService.createFarm(farm);
+    public ResponseEntity<Farm> createFarm(@RequestBody FarmRequest request, Authentication auth) {
+        Long userId = (Long) auth.getPrincipal();
+        Farm farm = new Farm();
+        farm.setName(request.getName());
+        farm.setSoilPH(request.getSoilPH());
+        farm.setWaterLevel(request.getWaterLevel());
+        farm.setSeason(request.getSeason());
+        Farm saved = farmService.createFarm(farm, userId);
+        return ResponseEntity.ok(saved);
     }
-
+    
     @GetMapping
-    public List<Farm> getAllFarms() {
-        return farmService.getAllFarms();
-    }
-
-    @GetMapping("/{id}")
-    public Farm getFarm(@PathVariable Long id) {
-        return farmService.getFarmById(id);
+    public ResponseEntity<List<Farm>> listFarms(Authentication auth) {
+        Long userId = (Long) auth.getPrincipal();
+        List<Farm> farms = farmService.getFarmsByOwner(userId);
+        return ResponseEntity.ok(farms);
     }
 }
