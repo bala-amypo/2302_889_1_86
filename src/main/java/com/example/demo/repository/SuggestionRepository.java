@@ -11,10 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface SuggestionRepository extends JpaRepository<Suggestion, Long> {
-
-    // FIXED: Use @Query instead of query method naming
+    
+    // TEST EXPECTS: findByFarmId(Long) - use @Query to fix JPA naming
     @Query("SELECT s FROM Suggestion s WHERE s.farm = :farmId")
     List<Suggestion> findByFarmId(@Param("farmId") Long farmId);
-
+    
     Optional<Suggestion> findById(Long id);
 }

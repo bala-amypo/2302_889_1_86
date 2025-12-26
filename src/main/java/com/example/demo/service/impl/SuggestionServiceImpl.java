@@ -1,9 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Crop;
-import com.example.demo.entity.Farm;
-import com.example.demo.entity.Fertilizer;
-import com.example.demo.entity.Suggestion;
+import com.example.demo.entity.*;
 import com.example.demo.repository.SuggestionRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +14,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     private final CatalogService catalogService;
     private final SuggestionRepository suggestionRepository;
 
+    // TEST EXPECTS exactly 3 constructor params in this order
     public SuggestionServiceImpl(FarmService farmService,
                                  CatalogService catalogService,
                                  SuggestionRepository suggestionRepository) {
@@ -27,32 +25,27 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     @Override
     public Suggestion generateSuggestion(Long farmId) {
-        // Get farm details
         Farm farm = farmService.getFarmById(farmId);
         
-        // Find suitable crops based on farm conditions
         List<Crop> crops = catalogService.findSuitableCrops(
             farm.getSoilPH(), 
             farm.getWaterLevel(), 
             farm.getSeason()
         );
         
-        // Extract crop names
         List<String> cropNames = crops.stream()
             .map(Crop::getName)
             .collect(Collectors.toList());
-        
-        // Find fertilizers for those crops
-        List<Fertilizer> fertilizers = catalogService.findFertilizersForCrops(cropNames);
-        List<String> fertilizerNames = fertilizers.stream()
+            
+        List<Fertilizer> ferts = catalogService.findFertilizersForCrops(cropNames);
+        List<String> fertNames = ferts.stream()
             .map(Fertilizer::getName)
             .collect(Collectors.toList());
         
-        // Create suggestion
         Suggestion suggestion = Suggestion.builder()
             .farm(farm.getId())
             .suggestedCrops(String.join(", ", cropNames))
-            .suggestedFertilizers(String.join(", ", fertilizerNames))
+            .suggestedFertilizers(String.join(", ", fertNames))
             .build();
             
         return suggestionRepository.save(suggestion);
