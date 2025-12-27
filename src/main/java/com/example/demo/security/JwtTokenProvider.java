@@ -15,36 +15,27 @@ import java.util.Date;
 @Slf4j
 public class JwtTokenProvider {
 
-    @Value("${app.jwt.secret}")
+    @Value("${app.jwt.secret:mySecretKeyThatIsLongEnoughForHMACSHA256AtLeast32CharsLongerIsBetter}")
     private String jwtSecret;
 
     @Value("${app.jwt.expiration-ms:86400000}")
     private long jwtExpirationMs;
 
     private SecretKey key;
-    private boolean keyInitialized = false;
 
+    // ✅ NO constructor params = NO injection errors!
     public JwtTokenProvider() {}
 
-    /** ✅ CRITICAL FIX: Initialize in @PostConstruct (runs AFTER @Value injection) */
-    @PostConstruct
-    public void init() {
-        ensureKeyInitialized();
-        log.info("JWT Token Provider initialized successfully");
-    }
-
     private void ensureKeyInitialized() {
-        if (!keyInitialized) {
-            if (jwtSecret == null || jwtSecret.length() < 32) {
-                jwtSecret = "mySecretKeyThatIsLongEnoughForHMACSHA256AtLeast32CharsLongerIsBetter";
-                log.warn("Using default JWT secret");
+        if (key == null) {
+            if (jwtSecret.length() < 32) {
+                throw new IllegalArgumentException("JWT secret too short: " + jwtSecret.length());
             }
             this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-            this.keyInitialized = true;
+            log.info("JWT key initialized");
         }
     }
 
-    // ✅ Matches test expectation
     public String createToken(Long userId, String email, String role) {
         ensureKeyInitialized();
         return Jwts.builder()
@@ -57,51 +48,31 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Validate token (used in production)
     public boolean validateToken(String token) {
         try {
             ensureKeyInitialized();
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            log.error("Invalid JWT token", e);
             return false;
         }
     }
 
-    // Get email from token
     public String getEmail(String token) {
         ensureKeyInitialized();
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().getSubject();
     }
 
-    // Get userId from token
     public Long getUserId(String token) {
         ensureKeyInitialized();
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.get("userId", Long.class);
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().get("userId", Long.class);
     }
 
-    // Get role from token
     public String getRole(String token) {
         ensureKeyInitialized();
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.get("role", String.class);
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().get("role", String.class);
     }
 }
