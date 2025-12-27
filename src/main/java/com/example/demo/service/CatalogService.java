@@ -13,5 +13,7 @@ public interface CatalogService {
 
     List<Crop> findSuitableCrops(Double ph, Double waterLevel, String season);
 
+    List<Crop> findSuitableCrops(Double ph, String season);
+
     List<Fertilizer> findFertilizersForCrops(List<String> cropNames);
 }

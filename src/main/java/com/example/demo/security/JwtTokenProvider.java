@@ -12,11 +12,18 @@ public class JwtTokenProvider {
     private final String secret;
     private final long jwtExpirationMs;
 
+    // ✅ EXISTING constructor (Spring Boot usage)
     public JwtTokenProvider(
             @Value("${app.jwt.secret:ThisIsAReallyLongJwtSecretKeyForDemoProject123456}") String secret,
             @Value("${app.jwt.expiration-ms:86400000}") long jwtExpirationMs) {
         this.secret = secret;
         this.jwtExpirationMs = jwtExpirationMs;
+    }
+
+    // ✅ ADD THIS constructor (Test usage)
+    public JwtTokenProvider() {
+        this.secret = "ThisIsAReallyLongJwtSecretKeyForDemoProject123456";
+        this.jwtExpirationMs = 86400000; // 24 hours
     }
 
     public String createToken(Long userId, String email, String role) {
@@ -38,8 +45,10 @@ public class JwtTokenProvider {
         try {
             parseClaims(token);
             return true;
-        } catch (ExpiredJwtException | UnsupportedJwtException |
-                 MalformedJwtException | IllegalArgumentException ex) {
+        } catch (ExpiredJwtException |
+                 UnsupportedJwtException |
+                 MalformedJwtException |
+                 IllegalArgumentException ex) {
             return false;
         }
     }
@@ -58,7 +67,6 @@ public class JwtTokenProvider {
     }
 
     private Jws<Claims> parseClaims(String token) {
-        // jjwt 0.9.1: parser() returns JwtParser directly [web:40]
         JwtParser parser = Jwts.parser().setSigningKey(secret);
         return parser.parseClaimsJws(token);
     }
