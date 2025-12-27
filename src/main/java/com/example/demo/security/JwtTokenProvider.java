@@ -40,13 +40,12 @@ public class JwtTokenProvider {
 
     public String createToken(Long userId, String email, String role) {
         ensureKeyInitialized();
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
-        claims.put("role", role);
         
+        // ✅ JJWT 0.11.5: Add claims INDIVIDUALLY (no .claims() method)
         return Jwts.builder()
-                .claims(claims)
-                .subject(email)
+                .claim("userId", userId)                    // ✅ Individual claims
+                .claim("role", role)                        // ✅ Individual claims
+                .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(key)
@@ -56,28 +55,44 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             ensureKeyInitialized();
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            log.error("Invalid JWT token", e);
             return false;
         }
     }
 
     public String getEmail(String token) {
         ensureKeyInitialized();
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().getSubject();
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
     }
 
     public Long getUserId(String token) {
         ensureKeyInitialized();
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().get("userId", Long.class);
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("userId", Long.class);
     }
 
     public String getRole(String token) {
         ensureKeyInitialized();
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().get("role", String.class);
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class);
     }
 }
