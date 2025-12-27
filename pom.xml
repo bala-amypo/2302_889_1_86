@@ -20,6 +20,7 @@
     <properties>
         <java.version>17</java.version>
         <jjwt.version>0.11.5</jjwt.version>
+        <testng.version>7.9.0</testng.version>  <!-- ✅ FIXED: Explicit version -->
     </properties>
 
     <dependencies>
@@ -82,9 +83,11 @@
         </dependency>
 
         <!-- Test Dependencies -->
+        <!-- ✅ FIXED: Explicit version using property -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -100,7 +103,7 @@
             </exclusions>
         </dependency>
 
-        <!-- ✅ FIXED: @PostConstruct for Spring Boot 3.2.5 -->
+        <!-- ✅ FIXED: Jakarta for Spring Boot 3.2.5 -->
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
@@ -142,7 +145,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Maven Surefire Plugin - Auto-detects TestNG -->
+            <!-- Maven Surefire Plugin - Auto-detects TestNG tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -152,8 +155,19 @@
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
                         <include>**/*TestCase.java</include>
+                        <include>**/AllFunctionalTests.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <spring.profiles.active>test</spring.profiles.active>
+                    </systemPropertyVariables>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-testng</artifactId>
+                        <version>3.2.5</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
