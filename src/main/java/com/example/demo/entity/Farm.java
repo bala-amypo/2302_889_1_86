@@ -37,7 +37,11 @@ public class Farm {
     @NotBlank
     @Column(length = 20, nullable = false)
     private String season;
-
+    @Column(name = "owner_id", nullable = false)
+    private Long ownerId;
+       @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
     @PrePersist
     @PreUpdate
     public void validate() {
@@ -50,3 +54,39 @@ public class Farm {
         }
     }
 }
+
+
+// package com.example.demo.entity;
+
+// import jakarta.persistence.*;
+// import lombok.*;
+
+// @Entity
+// @Table(name = "farms")
+// @Getter
+// @Setter
+// @NoArgsConstructor
+// @AllArgsConstructor
+// @Builder
+// public class Farm {
+
+//     @Id
+//     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//     private Long id;
+
+//     @Column(nullable = false)
+//     private String name;
+
+//     @Column(name = "soil_ph")
+//     private Double soilPH;
+
+//     @Column(name = "water_level")
+//     private Double waterLevel;
+
+//     @Column(nullable = false)
+//     private String season;
+
+//     // ✅ REQUIRED by services & tests
+//     @Column(name = "owner_id", nullable = false)
+//     private Long ownerId;
+// }
