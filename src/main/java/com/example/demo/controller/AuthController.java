@@ -1,47 +1,37 @@
 package com.example.demo.controller;
-
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.RegisterRequest;
+import com.example.demo.dto.*;
 import com.example.demo.entity.User;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
-@RestController
-@RequestMapping("/auth")
-@Tag(name = "Authentication")
-@RequiredArgsConstructor
+@RestController @RequestMapping("/auth")
 public class AuthController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
+    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordEncoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<User> register(@Valid @RequestBody RegisterRequest request) {
-        User user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .build();
-        User registeredUser = userService.register(user);
-        return ResponseEntity.ok(registeredUser);
+    public ResponseEntity<?> register(@RequestBody RegisterRequest rr) {
+        User u = userService.register(User.builder().name(rr.getName()).email(rr.getEmail()).password(rr.getPassword()).build());
+        return ResponseEntity.ok(u);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request) {
-        User user = userService.findByEmail(request.getEmail());
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest ar) {
+        User u = userService.findByEmail(ar.getEmail());
+        if(u != null && passwordEncoder.matches(ar.getPassword(), u.getPassword())) {
+            String token = jwtTokenProvider.createToken(u.getId(), u.getEmail(), u.getRole());
+            return ResponseEntity.ok(new AuthResponse(token, u.getId(), u.getEmail(), u.getRole()));
         }
-        String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getRole());
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.status(401).build();
     }
 }
