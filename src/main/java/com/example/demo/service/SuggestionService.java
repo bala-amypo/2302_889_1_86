@@ -9,5 +9,3 @@ public interface SuggestionService {
     Suggestion getSuggestion(Long suggestionId);
     List<Suggestion> getSuggestionsByFarm(Long farmId);
 }
-
-

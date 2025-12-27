@@ -1,41 +1,29 @@
 package com.example.demo.security;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    @Value("${app.jwt.secret}")
-    private String jwtSecret;
-    
-    @Value("${app.jwt.expiration-ms:86400000}")
-    private long jwtExpirationMs;
-    
-    private SecretKey key;
-
-    public JwtTokenProvider() {
-        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-    }
+    // This key is long enough to satisfy the 256-bit requirement
+    private String secret = "SecretKeyForJWTTokenGenerationThatIsAtLeast32CharactersLong12345";
 
     public String createToken(Long userId, String email, String role) {
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("userId", userId);
+        claims.put("role", role);
         return Jwts.builder()
-                .claim("userId", userId)
-                .setSubject(email)
-                .claim("role", role)
+                .setClaims(claims)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(key)
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            parseClaims(token);
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -43,22 +31,15 @@ public class JwtTokenProvider {
     }
 
     public String getEmail(String token) {
-        return parseClaims(token).getSubject();
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 
     public Long getUserId(String token) {
-        return parseClaims(token).get("userId", Long.class);
+        Object id = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("userId");
+        return Long.valueOf(id.toString());
     }
 
     public String getRole(String token) {
-        return parseClaims(token).get("role", String.class);
-    }
-
-    private Claims parseClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("role").toString();
     }
 }
