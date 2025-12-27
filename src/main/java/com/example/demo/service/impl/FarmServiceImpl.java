@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Farm;
+import com.example.demo.entity.User;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.FarmRepository;
 import com.example.demo.service.FarmService;
@@ -21,7 +22,12 @@ public class FarmServiceImpl implements FarmService {
 
     @Override
     public Farm createFarm(Farm farm, Long ownerId) {
-        farm.setOwner(ownerId); // ✅ fixed below
+
+        // ✅ FIX: convert Long → User
+        User owner = new User();
+        owner.setId(ownerId);
+        farm.setOwner(owner);
+
         return farmRepository.save(farm);
     }
 
