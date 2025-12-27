@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.Crop;           // ✅ MISSING IMPORT
 import com.example.demo.entity.Farm;
+import com.example.demo.entity.Fertilizer;     // ✅ MISSING IMPORT
 import com.example.demo.entity.Suggestion;
 import com.example.demo.repository.FarmRepository;
 import com.example.demo.repository.SuggestionRepository;
@@ -9,6 +11,7 @@ import com.example.demo.service.SuggestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,15 +28,16 @@ public class SuggestionServiceImpl implements SuggestionService {
         Farm farm = farmRepository.findById(farmId)
                 .orElseThrow(() -> new RuntimeException("Farm not found"));
         
-        List suitableCrops = catalogService.findSuitableCrops(
+        // ✅ FIXED: Proper generics
+        List<Crop> suitableCrops = catalogService.findSuitableCrops(
                 farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
         List<String> cropNames = suitableCrops.stream()
-                .map(crop -> ((Crop) crop).getName())
+                .map(Crop::getName)  // ✅ No casting needed
                 .collect(Collectors.toList());
         
-        List fertilizers = catalogService.findFertilizersForCrops(cropNames);
+        List<Fertilizer> fertilizers = catalogService.findFertilizersForCrops(cropNames);
         List<String> fertilizerNames = fertilizers.stream()
-                .map(fert -> ((Fertilizer) fert).getName())
+                .map(Fertilizer::getName)  // ✅ No casting needed
                 .collect(Collectors.toList());
         
         Suggestion suggestion = Suggestion.builder()
