@@ -1,43 +1,37 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.*;
-
 import java.util.List;
 
-@Entity
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_users_email", columnNames = "email")
-})
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
     @NotBlank
-    @Column(length = 100, nullable = false)
+    @Size(max = 100)
     private String name;
-
+    
+    @NotBlank
     @Email
-    @NotBlank
-    @Column(length = 150, nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
-
+    
     @NotBlank
-    @Column(nullable = false)
+    @Size(min = 6)
     private String password;
-
+    
     @NotBlank
-    @Column(length = 20, nullable = false)
-    private String role;
-
+    private String role = "USER";
+    
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Farm> farms;
 }
