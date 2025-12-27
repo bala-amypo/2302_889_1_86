@@ -11,9 +11,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>crop-suggestion-api</name>
 
-    <!-- ======================= -->
-    <!-- SPRING BOOT PARENT -->
-    <!-- ======================= -->
+    <!-- Spring Boot parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -21,17 +19,11 @@
         <relativePath/>
     </parent>
 
-    <!-- ======================= -->
-    <!-- PROPERTIES -->
-    <!-- ======================= -->
     <properties>
         <java.version>17</java.version>
         <jjwt.version>0.11.5</jjwt.version>
     </properties>
 
-    <!-- ======================= -->
-    <!-- DEPENDENCIES -->
-    <!-- ======================= -->
     <dependencies>
 
         <!-- Spring Boot Web -->
@@ -67,7 +59,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- JWT Dependencies -->
+        <!-- JWT 0.11.5 -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -122,13 +114,10 @@
 
     </dependencies>
 
-    <!-- ======================= -->
-    <!-- BUILD PLUGINS -->
-    <!-- ======================= -->
     <build>
         <plugins>
 
-            <!-- Compiler Plugin -->
+            <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -146,7 +135,7 @@
                 </configuration>
             </plugin>
 
-            <!-- TestNG -->
+            <!-- Maven Surefire Plugin for TestNG -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -158,7 +147,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Spring Boot Plugin -->
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
