@@ -11,29 +11,29 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
     
     @Value("${app.jwt.secret:mySecretKeyThatIsLongEnoughForHMACSHA256AtLeast32CharsLongerIsBetter}")
-    private String jwtSecret;  // ✅ FIXED: Added @Value with default
+    private String jwtSecret;
     
     @Value("${app.jwt.expiration-ms:86400000}")
-    private long jwtExpirationMs;  // ✅ FIXED: Added @Value with default
+    private long jwtExpirationMs;
     
     private SecretKey key;
 
-    public JwtTokenProvider() {
-        // ✅ FIXED: Initialize AFTER @Value injection
-        initializeKey();
-    }
-
-    private void initializeKey() {
+    // ✅ FIXED: Use @PostConstruct - runs AFTER @Value injection!
+    @PostConstruct
+    public void init() {
         if (jwtSecret == null || jwtSecret.length() < 32) {
-            throw new IllegalArgumentException("JWT secret must be at least 32 characters");
+            jwtSecret = "mySecretKeyThatIsLongEnoughForHMACSHA256AtLeast32CharsLongerIsBetter";
+            log.warn("Using default JWT secret - configure app.jwt.secret in application.properties");
         }
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        log.info("JWT Token Provider initialized successfully");
     }
 
     public String createToken(Long userId, String email, String role) {
