@@ -1,43 +1,42 @@
 package com.example.demo.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
+@Slf4j
 public class JwtTokenProvider {
+    @Value("${app.jwt.secret}")
+    private String jwtSecret;
+    
+    @Value("${app.jwt.expiration-ms:86400000}")
+    private long jwtExpirationMs;
+    
+    private SecretKey key;
 
-    private final String secret;
-    private final long jwtExpirationMs;
-
-    // ✅ EXISTING constructor (Spring Boot usage)
-    public JwtTokenProvider(
-            @Value("${app.jwt.secret:ThisIsAReallyLongJwtSecretKeyForDemoProject123456}") String secret,
-            @Value("${app.jwt.expiration-ms:86400000}") long jwtExpirationMs) {
-        this.secret = secret;
-        this.jwtExpirationMs = jwtExpirationMs;
-    }
-
-    // ✅ ADD THIS constructor (Test usage)
     public JwtTokenProvider() {
-        this.secret = "ThisIsAReallyLongJwtSecretKeyForDemoProject123456";
-        this.jwtExpirationMs = 86400000; // 24 hours
+        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     public String createToken(Long userId, String email, String role) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + jwtExpirationMs);
-
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("role", role);
+        
         return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", userId)
-                .claim("email", email)
-                .claim("role", role)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .claims(claims)
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(key)
                 .compact();
     }
 
@@ -45,29 +44,29 @@ public class JwtTokenProvider {
         try {
             parseClaims(token);
             return true;
-        } catch (ExpiredJwtException |
-                 UnsupportedJwtException |
-                 MalformedJwtException |
-                 IllegalArgumentException ex) {
+        } catch (Exception e) {
+            log.error("Invalid JWT token", e);
             return false;
         }
     }
 
     public String getEmail(String token) {
-        return parseClaims(token).getBody().get("email", String.class);
+        return parseClaims(token).getSubject();
     }
 
     public Long getUserId(String token) {
-        Number n = parseClaims(token).getBody().get("userId", Number.class);
-        return n == null ? null : n.longValue();
+        return parseClaims(token).get("userId", Long.class);
     }
 
     public String getRole(String token) {
-        return parseClaims(token).getBody().get("role", String.class);
+        return parseClaims(token).get("role", String.class);
     }
 
-    private Jws<Claims> parseClaims(String token) {
-        JwtParser parser = Jwts.parser().setSigningKey(secret);
-        return parser.parseClaimsJws(token);
+    private Claims parseClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseClaimsJws(token)
+                .getPayload();
     }
 }
