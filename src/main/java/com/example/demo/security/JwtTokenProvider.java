@@ -26,10 +26,18 @@ public class JwtTokenProvider {
 
     public JwtTokenProvider() {}
 
+    /** ✅ CRITICAL FIX: Initialize in @PostConstruct (runs AFTER @Value injection) */
+    @PostConstruct
+    public void init() {
+        ensureKeyInitialized();
+        log.info("JWT Token Provider initialized successfully");
+    }
+
     private void ensureKeyInitialized() {
         if (!keyInitialized) {
             if (jwtSecret == null || jwtSecret.length() < 32) {
                 jwtSecret = "mySecretKeyThatIsLongEnoughForHMACSHA256AtLeast32CharsLongerIsBetter";
+                log.warn("Using default JWT secret");
             }
             this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
             this.keyInitialized = true;
