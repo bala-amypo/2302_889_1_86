@@ -24,7 +24,6 @@ public class FarmController {
         this.userService = null;
     }
 
-    // ✅ ADD THIS constructor (Test usage)
     public FarmController(FarmService farmService,
                           UserService userService) {
         this.farmService = farmService;

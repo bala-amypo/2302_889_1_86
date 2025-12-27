@@ -26,13 +26,11 @@ public class SecurityConfig {
         this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
-    // ✅ REQUIRED for AuthController
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ Correct filter constructor
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtTokenProvider);
@@ -62,8 +60,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    // ✅ Optional (safe to keep, tests won't fail)
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
