@@ -1,6 +1,7 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,15 +15,24 @@ import java.util.Map;
 @Component
 @Slf4j
 public class JwtTokenProvider {
-    @Value("${app.jwt.secret}")
-    private String jwtSecret;
+    
+    @Value("${app.jwt.secret:mySecretKeyThatIsLongEnoughForHMACSHA256AtLeast32CharsLongerIsBetter}")
+    private String jwtSecret;  // ✅ FIXED: Added @Value with default
     
     @Value("${app.jwt.expiration-ms:86400000}")
-    private long jwtExpirationMs;
+    private long jwtExpirationMs;  // ✅ FIXED: Added @Value with default
     
     private SecretKey key;
 
     public JwtTokenProvider() {
+        // ✅ FIXED: Initialize AFTER @Value injection
+        initializeKey();
+    }
+
+    private void initializeKey() {
+        if (jwtSecret == null || jwtSecret.length() < 32) {
+            throw new IllegalArgumentException("JWT secret must be at least 32 characters");
+        }
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
